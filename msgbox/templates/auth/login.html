@@ -17,9 +17,13 @@
 </form>
 
 <br>
-测试socket通信:
+测试websocket通信:
 <div class="socketwrapper" id="time" style="width:300px;height:300px;border:solid 1px gray;">
 </div>
+
+<input type="text" name="msg" id="msg" placeholder="请输入要发送给服务器端的消息"/>
+<br>
+<button id="sendmsg" type="button">发送</button>
 <script>
     $(function () {
         var socket = io.connect('ws://127.0.0.1:5000/websocket/user_refresh');
@@ -29,7 +33,22 @@
 
         socket.on('server_response', function (msg) {
             console.log(msg)
-        })
+        });
+
+        socket.on("server_respchat", function (msg) {
+            console.log("发送消息后，后端返回了:", msg.data);
+            textnode = document.createTextNode(msg.data)
+            $("#time").append(textnode).append($("<br/>"))
+            $("#msg").val("")
+        });
+
+        // 点击发送
+        $("#sendmsg").click(function () {
+            var msg = $("#msg").val()
+            socket.emit("receive_msg", {data: msg})
+        });
+
+
     });
 </script>
 </body>

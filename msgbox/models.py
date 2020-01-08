@@ -1,89 +1,101 @@
-'''消息盒子模型'''
+"""cssrc消息盒子建模"""
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, Table
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey
+from sqlalchemy.orm import relationship, backref
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from msgbox.db import Base
 
 
-class User(Base):
-    '''测试用户模型'''
-    __tablename__ = 'users'
+class BaseModel(object):
+    """模型基类"""
+    create_time = Column(DateTime, default=datetime.utcnow())  # 记录模型的创建时间
+    update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())  # 记录模型更新时间
+
+
+class Organization(Base, BaseModel):
+    """系统部门组织结构"""
+    __tablename__ = "msgbox_originzation"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), unique=True)
-    email = Column(String(100), unique=True)
-
-    def __init__(self, name, email):
-        self.name = name
-        self.email = email
-
-    def __repr__(self):
-        return '<User %r> ' % (self.name)
+    depname = Column(String(255), nullable=False)  # 系统部门的名称
+    pid = Column(Integer, default=None)  # 父节点编号
+    users = relationship('User', backref='msgbox_originzation', lazy='dynamic')  # 该部门下的所有的用户
 
 
-class Category(Base):
-    """文章的类别"""
-    __tablename__ = 'category'
+class ServiceSystem(Base, BaseModel):
+    """服务系统"""
+    __tablename__ = "msgbox_servicesystem"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50))
+    sysname = Column(String(255), nullable=False)  # 系统名称
+    sysdescription = Column(Text)  # 系统描述
+    sysip = Column(String(100))  # 系统ip地址
+    sysport = Column(String(100))  # 系统端口
+    sysurl = Column(String(255))  # 系统url
+    appkey = Column(String(255), unique=True)  # app的key
+    appsecrect = Column(String(255), unique=True)  # app的秘钥
+    status = Column(
+        Enum(
+            "CLOSED",  # 已关闭
+            "OPENING",  # 已开启
+        ),
+        default="CLOSED", index=True
+    )
+    pushed_msglist = relationship("SystemMessage", backref="msgbox_servicesystem", lazy="dynamic")  # 某系统下所有推送的消息
 
-    def __init__(self, name):
-        self.name = name
 
-
-class Post(Base):
-    """文章"""
-    __tablename__ = "post"
+class User(Base, BaseModel):
+    """用户实体类"""
+    __tablename__ = "msgbox_userinfo"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(80))
-    body = Column(Text)
-    pub_date = Column(DateTime, default=datetime.utcnow())
-    category_id = Column(Integer, ForeignKey('category.id'))
-    category = relationship('Category', backref='posts', lazy='dynamic')
+    real_name = Column(String(32))  # 用户名
+    workerid = Column(String(30), unique=True)  # 工号
+    password = Column(String(255), nullable=False)  # 加密的密码
+    phone_num = Column(String(100))  # 手机号(预留)
+    avatar_url = Column(String(255))  # 用户头像(预留)
+    dep_id = Column(Integer, ForeignKey('msgbox_originzation.id'), nullable=False)  # 所在部门的编号
+    status = Column(  # 性别(备用)
+        Enum(
+            "MAILE",  # 男
+            "FEMAILE",  # 女
+        ),
+        default="MAILE", index=True
+    )
 
-    def __init__(self, title, body, category, pub_date=None):
-        self.title = title
-        self.body = body
-        self.category = category
-        if pub_date is None:
-            pub_date = datetime.utcnow()
-        self.pub_date = pub_date
+    pushed_msglist = relationship("SystemMessage", backref="msgbox_userinfo", lazy="dynamic")  # 当前用户下的所有的消息
+
+    @property
+    def password_hash(self):
+        raise AttributeError(u'不能访问该属性')
+
+    @password_hash.setter
+    def password_hash(self, value):
+        self.password = generate_password_hash(value)
+
+    def check_password(self, password):
+        """校验密码的正确性"""
+        return check_password_hash(self.password, password)
 
 
-# 一对多的关系 Person -> (address1, address2, address3, ...)
-class Address(Base):
-    """地址(多)"""
-    __tablename__ = 'address'
+class SystemMessage(Base, BaseModel):
+    """系统推送的消息"""
+    __tablename__ = "msgbox_sysmessage"
+
     id = Column(Integer, primary_key=True, autoincrement=True)
-    email = Column(String(50))
-    person_id = Column(Integer, ForeignKey('person.id'))
-
-
-class Person(Base):
-    """人实体类(一)"""
-    __tablename__ = "person"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50))
-    addresses = relationship('Address', backref="person", lazy="dynamic")
-
-
-# 多对多的关系 假设 Page 与 Tag 是多对多的关系
-class Tag(Base):
-    __tablename__ = "tag"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-
-
-tags = Table('tags',
-             Base.metadata,
-             Column('tag_id', Integer, ForeignKey('tag.id')),
-             Column('page_id', Integer, ForeignKey('page.id')))
-
-
-class Page(Base):
-    __tablename__ = "page"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    tags = relationship('Tag', secondary=tags)
+    msg_title = Column(String(255), nullable=False)  # 消息的标题
+    from_sys_id = Column(Integer, ForeignKey('msgbox_servicesystem.id'), nullable=False)  # 消息所属的系统编号
+    to_usr_id = Column(Integer, ForeignKey("msgbox_userinfo.id"), nullable=False)  # 推送的用户对象编号
+    msg_push_time = Column(DateTime, default=datetime.utcnow())  # 推送消息的时间
+    msg_read_time = Column(DateTime, default=datetime.utcnow())  # 推送给用户消息查看的时间
+    msg_url = Column(String(255), nullable=False)  # 消息浏览器打开的路径
+    msg_status = Column(  # 消息的状态
+        Enum(
+            "WAITTING_SEND",  # 待发送
+            "WAITTING_READ",  # 已发送，待阅读
+            "HAVE_READED",  # 已阅读
+        ),
+        default="WAITTING_SEND", index=True
+    )

@@ -28,5 +28,11 @@ def connect():
 @socketio.on('connect_event', namespace='/websocket/user_refresh')
 def refresh_message(message):
     """ 服务端接受客户端发送的通信请求 """
-    logging.info("接受到来自客户端的请求")
     emit('server_response', {'data': "请求成功"})
+
+
+@socketio.on("receive_msg", namespace="/websocket/user_refresh")
+def receive_msg(msg):
+    """接收到来自客户端的消息"""
+    strmsg = msg['data']
+    emit("server_respchat", {'data': "你发送了：" + strmsg})
