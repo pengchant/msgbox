@@ -12,9 +12,10 @@ class BaseConfig:
     # 避免返回中文为unicode字符
     JSON_AS_ASCII = False
 
+    SQLALCHEMY_POOL_SIZE = 5
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
-    # 是否开启跟踪
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+
     SECRET_KEY = "\xf9\x18<\x9b\xfd\xfc\xc20\xe5\x03b\xa8K7e\xe2q\xc7Z\x98\xf1\x15\x93\x91"
 
     # REDIS数据库的配置

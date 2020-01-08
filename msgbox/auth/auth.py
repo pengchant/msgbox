@@ -3,7 +3,7 @@ import datetime
 import jwcrypto.jwk as jwk
 import python_jwt as jwt
 
-key = jwk.JWK.generate(kty='RSA', size=560)
+key = jwk.JWK.generate(kty='oct', size=256)
 
 
 class JWTUtils:
@@ -21,7 +21,7 @@ class JWTUtils:
         """
         try:
             payload = {'usr_id': user_id, 'login_time': login_time};
-            token = jwt.generate_jwt(payload, key, 'PS256', datetime.timedelta(days=10))
+            token = jwt.generate_jwt(payload, key, 'HS256', datetime.timedelta(minutes=1))
             return token
         except Exception as e:
             return None
@@ -34,7 +34,7 @@ class JWTUtils:
         :return: (tuple)|none   如果校验成功则返回usrid和logintime的元组
         """
         try:
-            _, playload = jwt.verify_jwt(auth_token, key, ['PS256'])
+            _, playload = jwt.verify_jwt(auth_token, key, ['HS256'])
             if 'usr_id' in playload and 'login_time' in playload:
                 return playload['usr_id'], playload['login_time']
             else:

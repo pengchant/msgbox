@@ -8,7 +8,6 @@ from flask_session import Session
 
 from msgbox import db, config
 from msgbox.config import APP_ENV
-
 from .config import config
 from .db import db_session
 
