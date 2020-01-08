@@ -1,3 +1,5 @@
+import logging
+
 import click
 from flask.cli import with_appcontext
 from flask_sqlalchemy import SQLAlchemy
@@ -30,12 +32,14 @@ def init_app(app):
     global db
     db.init_app(app)
     app.cli.add_command(init_db_command)
+    # init_db()  # 初始化数据库
 
 
 def init_db():
     '''初始化数据库'''
     import msgbox.models
     Base.metadata.create_all(bind=engine)
+    logging.info("数据库初始化完毕...")
 
 
 @click.command("init-db")
