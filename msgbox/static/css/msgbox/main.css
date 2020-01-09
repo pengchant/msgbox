@@ -1,0 +1,43 @@
+
+.btn-theme, .btn-theme:hover {
+    background-color: #024EA0;
+    border-color: #024EA0;
+    color: #fff;
+}
+
+.footer {
+    width: 100%;
+    text-align: center;
+    font-size: 15px;
+    color: #99999c;
+    padding: 14px 0px;
+}
+
+.error-msg {
+    display: none;
+    font-size: 14px;
+    color: red;
+    margin: -10px 0px 10px 50px;
+}
+
+.relative {
+    position: relative;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align:center;
+}
+
+.copyright {
+    text-align: center;
+    height:60px;
+    line-height:60px;
+    font-size:13px;
+    font-weight:600;
+    color: #a8a8a8;
+}
+

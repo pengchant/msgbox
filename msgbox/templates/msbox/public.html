@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %} - {% block bktitle %}{% endblock %} {% endblock %}
+{% block css_src %}
+    {# 样式引入 #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/msgbox/public.css') }}">
+    {% block bkcss %}{% endblock %}
+{% endblock %}
+
+{# 页面主体内容部分 #}
+{% block main_body %}
+    {# 页面导航部分 #}
+    <div class="mnav">
+
+        <div class="nav-content">
+            {# 网页logo内容 #}
+            <div class="nav-logo">
+                <a href="javascript:;">
+                    <img class="logo-img" src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+                    <span class="logo-txt">CSSRC消息盒子后台管理</span>
+                </a>
+            </div>
+            {# 网页用户信息部分 #}
+            <div class="nav-right fr">
+                <span>欢迎,管理员</span>
+                <a href="javascript:;" class="logout_link">退出</a>
+            </div>
+        </div>
+
+    </div>
+    {# 后台管理部分 #}
+    <div class="backend clearfix">
+        {# 左侧菜单栏部分 #}
+        <div class="backend_contnet">
+            <div class="left-content fl">
+                <a href="{{ url_for('bn.gousrmanage') }}"
+                   class="list-group-item {% if  render_obj and (render_obj['url'] == 'usrmanage') %}active{% endif %}">
+                    <span class="glyphicon glyphicon-user"></span> 用户管理
+                </a>
+                <a href="{{ url_for('bn.gosysmanage') }}"
+                   class="list-group-item {% if  render_obj and (render_obj['url'] == 'sysmanage') %}active{% endif %}">
+                    <span class="glyphicon glyphicon-globe"></span> 接入系统管理
+                </a>
+                <a href="{{ url_for('bn.gomodifypass') }}"
+                   class="list-group-item {% if  render_obj and (render_obj['url'] == 'modifypass') %}active{% endif %}">
+                    <span class="glyphicon glyphicon-tag"></span> 修改密码
+                </a>
+            </div>
+            <div class="right-content fl">
+                <div class="right_wrapper">
+                    <div class="nvbar">
+                        <ul class="breadcrumb">
+                            <li><span class="glyphicon glyphicon-home"></span> 当前位置</li>
+                            <li>cssrc消息盒子</li>
+                            <li><a href="javascript:;">{{ render_obj and render_obj['title'] }}</a></li>
+                        </ul>
+                    </div>
+                    {# 主要的具体内容部分 #}
+                    {% block bk_content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+{% block js_src %}
+    {# 引入js #}
+    {% block bkjs %}{% endblock %}
+{% endblock %}

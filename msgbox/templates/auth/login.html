@@ -1,55 +1,52 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>首页-登录</title>
-    <script src="{{ url_for('static', filename="js/jquery.min.js") }}"></script>
-    <script src="{{ url_for('static', filename="js/socket.io.js") }}"></script>
-</head>
-<body>
-这个是登录页面
-<form method="post">
-    用户名: <input type="text" name="username">
-    <input type="submit" value="登录">
-</form>
-
-<br>
-测试websocket通信:
-<div class="socketwrapper" id="time" style="width:300px;height:300px;border:solid 1px gray;">
-</div>
-
-<input type="text" name="msg" id="msg" placeholder="请输入要发送给服务器端的消息"/>
-<br>
-<button id="sendmsg" type="button">发送</button>
-<script>
-    $(function () {
-        var socket = io.connect('ws://127.0.0.1:5000/websocket/user_refresh');
-        socket.on('connect', function () {
-            socket.emit("connect_event", {data: '我已经连接上服务器'})
-        });
-
-        socket.on('server_response', function (msg) {
-            console.log(msg)
-        });
-
-        socket.on("server_respchat", function (msg) {
-            console.log("发送消息后，后端返回了:", msg.data);
-            textnode = document.createTextNode(msg.data)
-            $("#time").append(textnode).append($("<br/>"))
-            $("#msg").val("")
-        });
-
-        // 点击发送
-        $("#sendmsg").click(function () {
-            var msg = $("#msg").val()
-            socket.emit("receive_msg", {data: msg})
-        });
+{% extends 'base.html' %}
 
 
-    });
-</script>
-</body>
-</html>
+{% block title %} 登录 {% endblock %}
+
+{% block css_src %}
+    {# 样式引入 #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/msgbox/login.css') }}">
+{% endblock %}
+
+
+{% block main_body %}
+    {# 主体内容 #}
+    <div class="login_container">
+        <div class="mpanel">
+            <div class="mpanel-heading">
+                <img class="logoimg" src="{{ url_for('static', filename='img/logo.png') }}" alt="">
+                <span class="logotxt">CSSRC消息盒子后台管理</span>
+            </div>
+            <div class="mpanel-body">
+                <form role="form" class="form-horizontal form-login">
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 text-right login-label">管理员账户：</label>
+                        <div class="col-sm-7">
+                            <input type="text" autocomplete="false" class="form-control" placeholder="请输入管理员账户">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="" class="col-sm-3 text-right login-label">管理员密码：</label>
+                        <div class="col-sm-7">
+                            <input type="password" autocomplete="false" class="form-control" placeholder="请输入管理员密码">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-3">
+                            <button type="submit" class="btn btn-theme btn-block">登录</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+
+
+{% block js_src %}
+    {# 引入js #}
+{% endblock %}

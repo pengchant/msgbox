@@ -1,0 +1,121 @@
+{% extends 'msbox/public.html' %}
+
+{% block bktitle %}用户管理{% endblock %}
+
+{% block bkcss %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename="plugins/zTree_v3-master/css/metroStyle/metroStyle.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/msgbox/usrmanage.css") }}">
+    <style type="text/css">
+        /*******************菜单右键样式开始*******************/
+        div#rMenu {
+            position: absolute;
+            visibility: hidden;
+            top: 0;
+            background-color: #555;
+            text-align: left;
+            padding: 2px;
+            z-index: 10000;
+        }
+
+        div#rMenu ul li {
+            margin: 1px 0;
+            padding: 0 5px;
+            cursor: pointer;
+            list-style: none outside none;
+            background-color: #DFDFDF;
+        }
+
+        /*******************菜单右键样式结束*******************/
+    </style>
+{% endblock %}
+
+{# 主要内容部分 #}
+{% block bk_content %}
+
+    {# ===================右键menu开始================= #}
+    <div id="rMenu">
+        <ul>
+            <li id="m_add">增加节点</li>
+            <li id="m_del">删除节点</li>
+            <li id="m_mod">修改节点</li>
+        </ul>
+    </div>
+    {# ===================右键menu结束================= #}
+
+
+    <div class="usrmanage">
+        {# 左侧组织树 #}
+        <div class="orgtree topnav_box">
+            <div class="orgtree_title">部门组织结构</div>
+            <div id="treeDemo" class="ztree"></div>
+        </div>
+        <div class="usr_main">
+            <div class="usr_tool">
+                <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 创建</button>
+                <div class="search_tool fr">
+                    输入用户名: <input type="text" class="form-control inline-text" placeholder="请输入用户名">
+                    输入工号: <input type="text" class="form-control inline-text" placeholder="请输入工号">
+                    <button class="btn btn-warning btn_search"><i class="glyphicon glyphicon-search"></i> 查询</button>
+                </div>
+            </div>
+            <div class="usr_info">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr class="text-center">
+                        <th width="60px">序号</th>
+                        <th width="80px">姓名</th>
+                        <th>工号</th>
+                        <th>密码</th>
+                        <th>所在部门</th>
+                        <th width="120">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Bangalore</td>
+                        <td>560001</td>
+                        <td>560001</td>
+                        <td>560001</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-success">修改</button>
+                            <button type="button" class="btn btn-sm btn-danger">删除</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Bangalore</td>
+                        <td>560001</td>
+                        <td>560001</td>
+                        <td>560001</td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-success">修改</button>
+                            <button type="button" class="btn btn-sm btn-danger">删除</button>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center">
+                <ul class="pagination">
+                    <li><a href="#">&laquo;</a></li>
+                    <li><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# 引用的js文件 #}
+{% block bkjs %}
+    <script src="{{ url_for('static', filename='plugins/zTree_v3-master/js/jquery.ztree.core.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/zTree_v3-master/js/jquery.ztree.exedit.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/msgbox/usrmanage.js') }}"></script>
+{% endblock %}

@@ -1,5 +1,5 @@
 from flask import Blueprint
 
-bn = Blueprint('bn', __name__)
+bn = Blueprint('bn', __name__, url_prefix="/")
 
-from . import orgmanage, password, sysmanage, usrmanage
+from . import orgmanage, auth, sysmanage, usrmanage

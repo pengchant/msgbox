@@ -2,7 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 import redis
-from flask import Flask
+from flask import Flask, render_template, url_for, redirect
 from flask_cors import CORS
 from flask_session import Session
 
@@ -10,7 +10,9 @@ from msgbox import db, config
 from msgbox.config import APP_ENV
 from .config import config
 from .db import db_session
-from .socketserver import socketio
+
+# from .socketserver import socketio
+from .utils.common import login_required
 
 redis_conn = None
 session = Session()
@@ -40,11 +42,6 @@ def create_app():
     # 配置数据库
     db.init_app(app)
 
-    @app.teardown_appcontext
-    def shutdown_session(excetpion=None):
-        '''请求结束关闭连接'''
-        db_session.remove()
-
     # 配置redis
     global redis_conn
     redis_conn = redis.StrictRedis(host=config[APP_ENV].REDIS_HOST, port=config[APP_ENV].REDIS_PORT)
@@ -54,10 +51,25 @@ def create_app():
     session.init_app(app)
 
     # 配置websocket
-    socketio.init_app(app)
+    # socketio.init_app(app)
 
     # 注册api_v1_0蓝图
     from msgbox.api_v1 import api
-    app.register_blueprint(api, url_prefix="/api/v1.0")
+    app.register_blueprint(api)
+
+    # 注册后端管理蓝图
+    from msgbox.backendapp import bn
+    app.register_blueprint(bn)
+
+    @app.teardown_appcontext
+    def shutdown_session(excetpion=None):
+        '''请求结束关闭连接'''
+        db_session.remove()
+
+    @app.route("/", methods=['GET'])
+    # @login_required
+    def index():
+        """进入后端首页"""
+        return redirect(url_for('bn.gousrmanage'))
 
     return app

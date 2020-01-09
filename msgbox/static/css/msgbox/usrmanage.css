@@ -1,0 +1,55 @@
+/*用户管理部分css样式*/
+
+.usrmanage {
+    width: 950px;
+    margin: 0 auto;
+    height: auto;
+}
+
+/*组织树*/
+.orgtree {
+    display: inline-block;
+    width: 200px;
+    height: 600px;
+    border: solid 1px #efefef;
+    /*overflow-x: scroll;*/
+    /*overflow-y: scroll;*/
+}
+
+.usr_main {
+    width: 720px;
+    margin-left: 5px;
+    margin-right: 15px;
+    float: right;
+}
+
+.usr_tool {
+    width: 100%;
+    display: inline-block;
+    height: 60px;
+    line-height: 60px;
+    float: right;
+}
+
+.btn_search {
+    margin-left: 30px;
+    margin-top: -3px;
+}
+
+.usr_info {
+    height: 100%;
+    display: block;
+}
+
+.orgtree_title {
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #337ab7;
+    color: white;
+    text-align: center;
+}
+
+#treeDemo {
+    height: 100%;
+}

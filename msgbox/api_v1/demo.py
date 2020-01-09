@@ -26,13 +26,13 @@ def gettoken():
 def login():
     """测试登录"""
     if request.method == 'GET':
-        return render_template('auth/login.html')
+        return render_template('auth/login1.html')
     else:
         user = request.form.get('username')
         # 存在session中
         session.clear()
         session['user_id'] = user
-        return render_template("backend/index.html", objdata={"usr": user})
+        return render_template("msbox/index.html", objdata={"usr": user})
 
 
 @api.route("/loginout", methods=('GET',))
@@ -46,4 +46,4 @@ def logout():
 @login_required
 def goindex():
     """查看首页"""
-    return render_template("backend/index.html", objdata={"usr": session.get("user_id")})
+    return render_template("msbox/index.html", objdata={"usr": session.get("user_id")})

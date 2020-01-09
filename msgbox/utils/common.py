@@ -2,7 +2,7 @@ from abc import abstractmethod
 from functools import wraps
 from pyclbr import Function
 
-from flask import session, jsonify, request, g, redirect
+from flask import session, jsonify, request, g, redirect, url_for
 
 from msgbox.auth.auth import JWTUtils
 from msgbox.utils.response_code import RET
@@ -20,7 +20,7 @@ def login_required(view):
     def wrapped_view(**kwargs):
         user_id = session.get("user_id")
         if not user_id:
-            return jsonify(re_code=RET.SESSIONERR, msg="用户未曾登录")
+            return redirect(url_for('bn.login'))
         else:
             g.user_id = user_id
             return view(**kwargs)
