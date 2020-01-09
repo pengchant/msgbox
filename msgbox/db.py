@@ -28,7 +28,7 @@ Base.query = db_session.query_property()
 
 
 def init_app(app):
-    '''初始化app'''
+    """初始化app"""
     global db
     db.init_app(app)
     app.cli.add_command(init_db_command)
@@ -36,7 +36,7 @@ def init_app(app):
 
 
 def init_db():
-    '''初始化数据库'''
+    """初始化数据库"""
     import msgbox.models
     Base.metadata.create_all(bind=engine)
     logging.info("数据库初始化完毕...")

@@ -6,9 +6,9 @@ APP_ENV = 'testing'
 
 
 class BaseConfig:
-    '''
+    """
     基础的配置
-    '''
+    """
     # 避免返回中文为unicode字符
     JSON_AS_ASCII = False
 
@@ -36,14 +36,14 @@ class BaseConfig:
 
 
 class TestingConfig(BaseConfig):
-    '''测试环境'''
+    """测试环境"""
     DEBUG = True
     LOGGINE_LEVEL = logging.DEBUG
     SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://root:root@localhost:3306/cssrcmsgbox?charset=utf8"
 
 
 class DevelopmentConfig(BaseConfig):
-    '''生产环境'''
+    """生产环境"""
     LOGGINE_LEVEL = logging.WARNING
     SQLALCHEMY_DATABASE_URI = "mysql+mysqldb://root:root@localhost:3306/cssrcmsgbox?charset=utf8"
 
