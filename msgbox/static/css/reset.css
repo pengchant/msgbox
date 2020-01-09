@@ -96,3 +96,7 @@ a, a:hover, a:active, a:focus {
 input, input:active, input:focus {
     outline: none;
 }
+
+table.table tr th {
+    text-align: center
+}

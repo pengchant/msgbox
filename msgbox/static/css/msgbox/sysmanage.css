@@ -1,1 +1,22 @@
-/*xitong管理部分css样式*/
+/*系统管理部分css样式*/
+.sysmanage {
+    width: 100%;
+    height: 700px;
+    /*border: solid 1px red;*/
+}
+
+.usr_tool {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: solid 1px #efefef;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.btn_fix {
+    margin-top: -5px;
+}
+
+.syscont {
+    margin-top: 20px;
+}

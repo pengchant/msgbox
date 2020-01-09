@@ -4,16 +4,16 @@
     width: 950px;
     margin: 0 auto;
     height: auto;
+    float: left;
+    background: white;
 }
 
 /*组织树*/
 .orgtree {
-    display: inline-block;
     width: 200px;
-    height: 600px;
+    min-height: 640px;
     border: solid 1px #efefef;
-    /*overflow-x: scroll;*/
-    /*overflow-y: scroll;*/
+    float: left;
 }
 
 .usr_main {
@@ -21,11 +21,11 @@
     margin-left: 5px;
     margin-right: 15px;
     float: right;
+    height: auto;
 }
 
 .usr_tool {
     width: 100%;
-    display: inline-block;
     height: 60px;
     line-height: 60px;
     float: right;
@@ -37,8 +37,9 @@
 }
 
 .usr_info {
-    height: 100%;
+    width: 100%;
     display: block;
+    float: right;
 }
 
 .orgtree_title {
@@ -52,4 +53,10 @@
 
 #treeDemo {
     height: 100%;
+}
+
+.pagination_elem {
+    text-align: center;
+    width: 100%;
+    bottom: 0px;
 }
