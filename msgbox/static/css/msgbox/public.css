@@ -38,8 +38,8 @@
 /*主体内容部分*/
 .backend {
     margin-top: 20px;
-    overflow-x: hidden;
     margin-bottom: 20px;
+    min-height: 700px;
 }
 
 .backend_contnet {
