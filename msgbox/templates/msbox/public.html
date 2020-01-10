@@ -22,8 +22,12 @@
             </div>
             {# 网页用户信息部分 #}
             <div class="nav-right fr">
-                <span>欢迎,管理员</span>
-                <a href="javascript:;" class="logout_link">退出</a>
+                <span>欢迎,管理员:
+                    {% if g.user %}
+                        {{ g.user['user_name'] }}
+                    {% endif %}
+                </span>
+                <a href="javascript:;" id="msgbox_exit" class="logout_link">退出</a>
             </div>
         </div>
 
@@ -67,5 +71,6 @@
 
 {% block js_src %}
     {# 引入js #}
+    <script src="{{ url_for('static', filename='js/msgbox/public.js') }}"></script>
     {% block bkjs %}{% endblock %}
 {% endblock %}

@@ -1,6 +1,4 @@
-from abc import abstractmethod
 from functools import wraps
-from pyclbr import Function
 
 from flask import session, jsonify, request, g, redirect, url_for
 
@@ -19,10 +17,14 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         user_id = session.get("user_id")
+        user_name = session.get("user_name")
         if not user_id:
             return redirect(url_for('bn.login'))
         else:
-            g.user_id = user_id
+            g.user = {
+                "user_id": user_id,
+                "user_name": user_name
+            }
             return view(**kwargs)
 
     return wrapped_view
@@ -45,3 +47,6 @@ def token_required(view):
         return jsonify(re_code=RET.SESSIONERR, msg="TOKEN校验失败")
 
     return decorted
+
+
+

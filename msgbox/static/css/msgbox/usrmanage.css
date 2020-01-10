@@ -52,7 +52,7 @@
 }
 
 #treeDemo {
-    height: 100%;
+    min-height: 640px;
 }
 
 .pagination_elem {

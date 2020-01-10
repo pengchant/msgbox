@@ -2,7 +2,7 @@
 from datetime import datetime
 
 from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, ForeignKey
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from msgbox.db import Base
@@ -22,6 +22,15 @@ class Organization(Base, BaseModel):
     depname = Column(String(255), nullable=False)  # 系统部门的名称
     pid = Column(Integer, default=None)  # 父节点编号
     users = relationship('User', backref='msgbox_originzation', lazy='dynamic')  # 该部门下的所有的用户
+
+    def to_dict(self):
+        """转化为字典"""
+        return {
+            'id': self.id,
+            'name': self.depname,
+            'pId': self.pid,
+            'open': True
+        }
 
 
 class ServiceSystem(Base, BaseModel):
@@ -57,12 +66,18 @@ class User(Base, BaseModel):
     phone_num = Column(String(100))  # 手机号(预留)
     avatar_url = Column(String(255))  # 用户头像(预留)
     dep_id = Column(Integer, ForeignKey('msgbox_originzation.id'), nullable=False)  # 所在部门的编号
-    status = Column(  # 性别(备用)
+    gender = Column(  # 性别(备用)
         Enum(
             "MAILE",  # 男
             "FEMAILE",  # 女
         ),
         default="MAILE", index=True
+    )
+    usrrole = Column(
+        Enum(
+            "COMMON",  # 普通用户
+            "ADMIN"  # 用户密码
+        )
     )
 
     pushed_msglist = relationship("SystemMessage", backref="msgbox_userinfo", lazy="dynamic")  # 当前用户下的所有的消息
@@ -73,10 +88,11 @@ class User(Base, BaseModel):
 
     @password_hash.setter
     def password_hash(self, value):
+        # 生成hash密码
         self.password = generate_password_hash(value)
 
     def check_password(self, password):
-        """校验密码的正确性"""
+        # 校验密码是否正确
         return check_password_hash(self.password, password)
 
 
