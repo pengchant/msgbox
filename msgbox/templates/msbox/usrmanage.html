@@ -44,6 +44,7 @@
     {# ===================右键menu结束================= #}
 
 
+
     <div class="usrmanage">
         {# 左侧组织树 #}
         <div class="orgtree topnav_box">
@@ -52,7 +53,9 @@
         </div>
         <div class="usr_main">
             <div class="usr_tool">
-                <button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> 创建</button>
+                <button type="button" id="btn_createusr" class="btn btn-primary"><i
+                        class="glyphicon glyphicon-plus"></i> 创建
+                </button>
                 <div class="search_tool fr">
                     输入用户名: <input type="text" class="form-control inline-text" placeholder="请输入用户名">
                     输入工号: <input type="text" class="form-control inline-text" placeholder="请输入工号">
@@ -209,4 +212,21 @@
     <script src="{{ url_for('static', filename='plugins/zTree_v3-master/js/jquery.ztree.exedit.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/msgbox/usrmanage-org.js') }}"></script>
     <script src="{{ url_for('static', filename='js/msgbox/usrmanage.js') }}"></script>
+    <script>
+        $(function () {
+
+            // 新建打开模态框
+            $("#btn_createusr").click(function () {
+                layer.open({
+                    type: 2,
+                    title: '创建用户',
+                    maxmin: true,
+                    shadeClose: true, //点击遮罩关闭层
+                    area: ['800px', '580px'],
+                    content: '{{ url_for('bn.usradd') }}' // 新增用户页面
+                });
+            });
+
+        });
+    </script>
 {% endblock %}

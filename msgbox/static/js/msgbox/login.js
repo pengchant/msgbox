@@ -33,8 +33,11 @@ $(function () {
             if (data && data.re_code == "0") {
                 window.location.href = "/"; // 登录成功跳转到首页
             } else {
-                $("#password-err span").html("密码填写错误");
-                $("#password-err").show();
+                swal(data.msg, {
+                    icon: 'error',
+                    button: false,
+                    timer: 1200,
+                })
             }
         });
     });

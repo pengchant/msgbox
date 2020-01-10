@@ -1,0 +1,48 @@
+  .copyright {
+            display: none;
+        }
+
+        body {
+            background: white;
+        }
+
+        .usr_editdiv {
+            width: 600px;
+            margin: 30px auto 0;
+        }
+
+        .fix-label {
+            margin-top: 10px;
+        }
+
+        /*设置属性目录的样式*/
+        #treeDemo {
+            height: 220px;
+            overflow-y: scroll;
+            border: solid 1px #ccc;
+        }
+
+        /*重写树形目录a的样式*/
+        .ztree li a {
+            width: 90%;
+        }
+
+        .ztree li a.curSelectedNode {
+            background-color: #024EA0;
+            color: white;
+        }
+
+        .depdescriptoin {
+            height: 40px;
+            line-height: 40px;
+        }
+
+        #curdep_name {
+            color: #024EA0;
+            font-weight: 800;
+            margin-left: 10px;
+        }
+
+        .error-msg {
+            margin: -10px 0px 10px 160px;
+        }

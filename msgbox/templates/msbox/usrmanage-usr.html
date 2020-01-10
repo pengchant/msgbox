@@ -1,0 +1,76 @@
+{% extends('base.html') %}
+
+{% block css_src %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename="plugins/zTree_v3-master/css/metroStyle/metroStyle.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/msgbox/usrmanage-usr.css") }}">
+{% endblock %}
+
+
+{% block main_body %}
+
+    <div class="usr_editdiv">
+        <form role="form" class="form-horizontal form-modpass" id="usrform">
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">工号：</label>
+                <div class="col-sm-7">
+                    <input type="text" name="workerid" autocomplete="false" class="form-control vali-input"
+                           placeholder="请输入工号">
+                </div>
+            </div>
+            <div class="error-msg" id="workerid-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">用户名：</label>
+                <div class="col-sm-7">
+                    <input name="usrname" type="text" autocomplete="false" class="form-control vali-input"
+                           placeholder="请输入用户名">
+                </div>
+            </div>
+            <div class="error-msg" id="usrname-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">密码：</label>
+                <div class="col-sm-7">
+                    <input type="password" name="password" autocomplete="false" class="form-control vali-input"
+                           placeholder="请输入密码">
+                </div>
+            </div>
+            <div class="error-msg" id="password-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">所在部门：</label>
+                <div class="col-sm-7">
+                    {# 选择内容区域 #}
+                    <p class="depdescriptoin">
+                        <span class="text-danger">当前选择的部门: </span><span id="curdep_name">--</span>
+                        {# 隐藏域部门的编号 #}
+                        <input type="hidden" name="curdep_id" placeholder="请选择部门" id="curdep_id" class="vali-input"
+                               value=""/>
+                    </p>
+                    <div id="treeDemo" class="ztree treecontent"></div>
+                </div>
+            </div>
+            <div class="error-msg" id="curdep_id-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-3 text-center">
+                    <button type="button" class="btn btn-theme" id="btn_createusr">创建用户</button> &nbsp; &nbsp;
+                    <button type="button" class="btn " id="btn_cancelusr">取消</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block js_src %}
+    <script src="{{ url_for('static', filename='plugins/zTree_v3-master/js/jquery.ztree.core.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/md5.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/msgbox/usrmanage-usr.js') }}"></script>
+{% endblock %}

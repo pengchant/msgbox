@@ -26,6 +26,7 @@ $(function () {
                         window.location.href = "/login"
                     } else {
                         swal("退出失败，请稍后重试", {
+                            icon: 'error',
                             button: false,
                             timer: 1200
                         })
@@ -35,3 +36,4 @@ $(function () {
         });
     });
 });
+

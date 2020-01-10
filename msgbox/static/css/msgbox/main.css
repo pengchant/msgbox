@@ -1,5 +1,5 @@
 
-.btn-theme, .btn-theme:hover {
+.btn-theme, .btn-theme:hover, .btn-theme:focus, .btn-theme:active {
     background-color: #024EA0;
     border-color: #024EA0;
     color: #fff;
@@ -46,4 +46,5 @@
     position: absolute;
     bottom: 0px;
 }
+
 
