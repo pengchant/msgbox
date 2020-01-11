@@ -61,7 +61,7 @@ $.extend({
         $(".pagination").bootstrapPaginator({
             bootstrapMajorVersion: 3,
             currentPage: pageCurrent,
-            totalPages: pageSum,
+            totalPages: pageSum == 0 ? 1 : pageSum,
             alignment: "center",
             numberOfPages: 6,
             // shouldShowPage: true,

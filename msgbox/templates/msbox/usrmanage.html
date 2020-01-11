@@ -55,11 +55,16 @@
             <div class="usr_tool" id="usr_tool">
                 <button type="button" id="btn_createusr" class="btn btn-primary"><i
                         class="glyphicon glyphicon-plus"></i> 创建
+                </button>&nbsp;&nbsp;
+                <button type="button" id="btn_refreshusr" class="btn btn-info"><i
+                        class="glyphicon glyphicon-refresh"></i> 刷新
                 </button>
                 <div class="search_tool fr">
-                    输入用户名: <input type="text" class="form-control inline-text" placeholder="请输入用户名">
-                    输入工号: <input type="text" class="form-control inline-text" placeholder="请输入工号">
-                    <button class="btn btn-warning btn_search"><i class="glyphicon glyphicon-search"></i> 查询</button>
+                    输入用户名: <input id="usrname" type="text" class="form-control inline-text" placeholder="请输入用户名">
+                    输入工号: <input id="workerid" type="text" class="form-control inline-text" placeholder="请输入工号">
+                    <button id="filterquery" class="btn btn-warning btn_search"><i
+                            class="glyphicon glyphicon-search"></i> 查询
+                    </button>
                 </div>
             </div>
             <div class="usr_info">
@@ -79,6 +84,11 @@
                     {% raw %}
                     <tbody id="usrtbody">
                     <script type="text/html" id="tableTemp">
+                        <%  if (item.data.length == 0) { %>
+                        <tr>
+                            <td colspan="5" class="text-center">暂无数据</td>
+                        </tr>
+                        <% } else { %>
                         <%for(let i = 0; i < item.data.length; i++){%>
                         <tr>
                             <td><%=((item.page - 1)*item.size+ i + 1)%></td>
@@ -86,11 +96,17 @@
                             <td><%=item.data[i].workerid%></td>
                             <td><%=item.data[i].depname%></td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-success">修改</button>
-                                <button type="button" class="btn btn-sm btn-danger">删除</button>
+                                <button type="button" class="btn btn-sm btn-success"
+                                        onclick="modifyUsr('{{ item.data[i].id }}', '{{ item.data[i].usrname }}')">修改
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger"
+
+                                        onclick="delUsr('{{ item.data[i].id}}', '{{ item.data[i].usrname }}')">删除
+                                </button>
                             </td>
                         </tr>
                         <%}%>
+                        <% } %>
                     </script>
                     </tbody>
                     {% endraw %}
@@ -114,6 +130,67 @@
     <script src="{{ url_for('static', filename='js/msgbox/usrmanage.js') }}"></script>
     <script src="{{ url_for('static', filename='js/msgbox/usrmanage-org.js') }}"></script>
     <script>
+        /**
+         * 修改用户
+         * @param usrid
+         */
+        function modifyUsr(usrid, name) {
+            layer.open({
+                type: 2,
+                title: '修改用户-' + name,
+                maxmin: true,
+                shadeClose: true, //点击遮罩关闭层
+                area: ['800px', '580px'],
+                content: '{{ url_for('bn.usrmodi')}}' + '?usrid=' + usrid // 新增用户页面
+            });
+        }
+
+        /**
+         * 删除用户
+         * @param usrid
+         */
+        function delUsr(usrid, name) {
+            console.log(usrid)
+            swal({
+                icon: "info",
+                text: "确定要删除用户" + name + "吗？",
+                buttons: {
+                    cancel: {
+                        text: "取消",
+                        visible: true,
+                        className: 'btn',
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "确定",
+                        className: 'btn btn-primary',
+                        closeModal: true,
+                    }
+                }
+            }).then(function (result) {
+                if (result) {
+                    $.post("/usrdel?usrid=" + usrid, function (data) {
+                        if (data.re_code == "0") {
+                            swal("删除成功", {
+                                icon: 'success',
+                                button: false,
+                                timer: 1200
+                            });
+                            setTimeout(function () {
+                                location.reload()
+                            }, 1100)
+                        } else {
+                            swal(data.msg, {
+                                icon: 'error',
+                                button: false,
+                                timer: 1200
+                            })
+                        }
+                    })
+                }
+            });
+        }
+
         $(function () {
 
             // 新建打开模态框

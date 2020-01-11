@@ -107,8 +107,9 @@ $(function () {
                 zNodes = result.data
             } else {
                 swal(result.msg, {
-                    buttons: false,
-                    timer: 1200
+                    icon: 'error',
+                    button: false,
+                    timer: 1200,
                 })
             }
             restTree(zNodes);
@@ -240,8 +241,8 @@ $(function () {
      * @param clickFlag
      */
     function onClick(event, treeId, treeNode, clickFlag) {
-        console.log("==========CLICK TREE NODE==========", treeNode)
-        // TODO:向后台发起相关的数据库操作请求（可选），用于查询数据
+        queryParams.condition.orgid = treeNode.id
+        query(queryParams)
     }
 
     /**
@@ -296,17 +297,17 @@ $(function () {
         var zTree = $.fn.zTree.getZTreeObj("treeDemo");
         var nodes = zTree.getSelectedNodes();
         if (nodes && nodes.length > 0) {
-            if (nodes[0].children && nodes[0].children.length > 0) {
-                var msg = "要删除的节点是父节点，如果删除将连同子节点一起删掉。\n\n请确认！";
-                if (confirm(msg) == true) {
-                    zTree.removeNode(nodes[0]);
-                }
-            } else {
+            // if (nodes[0].children && nodes[0].children.length > 0) {
+            //     var msg = "要删除的节点是父节点，如果删除将连同子节点一起删掉。\n\n请确认！";
+            //     if (confirm(msg) == true) {
+            //         zTree.removeNode(nodes[0]);
+            //     }
+            // } else {
                 if (confirm("你确定要删除吗")) {
                     zTree.removeNode(nodes[0]);
                     onRemove(null, null, nodes[0]);
                 }
-            }
+            // }
         }
     });
 

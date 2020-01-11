@@ -52,11 +52,48 @@ def usradd():
 @bn.route("/usrmodi", methods=['GET', 'POST'])
 def usrmodi():
     """修改用户信息"""
+    usrid = request.args.get("usrid")
+    u = User.query.filter(User.id == usrid).first()
+    if u is None:
+        return "对不起，你的访问异常"
+
     if request.method == "GET":
-        render_obj = {"type": "modi"}
+        render_obj = {"type": "modi", 'cur_usr': u.to_detail_dict()}
         return render_template('msbox/usrmanage-usr.html', render_obj=render_obj)
     else:
-        return jsonify(re_code=RET.OK, msg="添加用户成功")
+        workerid = request.form.get("workerid")
+        usrname = request.form.get("usrname")
+        depid = request.form.get("curdep_id")
+        password = request.form.get("password")
+        
+        if not all([workerid, usrname, depid]):
+            return jsonify(re_code=RET.PARAMERR, msg="提交用户参数有误")
+
+        try:
+            u.workerid = workerid
+            u.real_name = usrname
+            u.dep_id = depid
+            if password is not None and password != '':
+                u.password_hash = password
+            db_session.commit()
+            return jsonify(re_code=RET.OK, msg="修改用户成功")
+        except Exception as e:
+            return jsonify(re_code=RET.DBERR, msg="修改用户失败，请稍后重试")
+
+
+@bn.route("/usrdel", methods=['POST'])
+def usrdel():
+    """删除用户信息"""
+    usrid = request.args.get("usrid")
+    u = User.query.filter(User.id == usrid).first()
+    if u is None:
+        return jsonify(re_code=RET.NODATA, msg="用户不存在")
+    try:
+        db_session.delete(u)
+        db_session.commit()
+    except Exception as e:
+        return jsonify(re_code=RET.PARAMERR, msg="删除失败")
+    return jsonify(re_code=RET.OK, msg="删除成功!")
 
 
 @bn.route("/modifypass", methods=['GET'])
@@ -72,11 +109,27 @@ def filterusrinfo():
     过滤查询用户的信息
     :return:
     """
+    conditions = []  # 保留模糊查询的条件
     filterobj = page_helper_getparam(request)
+
     if filterobj is None:
         return jsonify(re_code=RET.PARAMERR, msg="参数不完整")
+    filter_cond = filterobj['condition']
+
+    if filter_cond.get('usrname', '') != '':
+        conditions.append(User.real_name.like('%' + filter_cond['usrname'] + '%'))
+
+    if filter_cond.get('workerid', '') != '':
+        conditions.append(User.workerid.like('%' + filter_cond['workerid'] + '%'))
+
+    if filter_cond.get('orgid', '') != '':
+        conditions.append(User.dep_id == filter_cond['orgid'])
+
+    # 剔除管理员
+    conditions.append(User.usrrole != 'ADMIN')
+
     result = page_helper_filter(
-        User.query.filter(),
+        User.query.filter(*conditions),
         filterobj,
         lambda usrs: [v.to_dict() for v in usrs]
     )

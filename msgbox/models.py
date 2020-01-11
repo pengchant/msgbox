@@ -106,6 +106,15 @@ class User(Base, BaseModel):
             "depname": self.dep.depname,  # 部门名称
         }
 
+    def to_detail_dict(self):
+        return {
+            "id": self.id,  # 编号
+            "workerid": self.workerid,  # 用户工号
+            "usrname": self.real_name,  # 用户名
+            "depid": self.dep_id,  # 部门编号
+            "depname": self.dep.depname,  # 部门名称
+        }
+
 
 class SystemMessage(Base, BaseModel):
     """系统推送的消息"""
