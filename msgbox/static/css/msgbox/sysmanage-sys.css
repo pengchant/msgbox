@@ -1,0 +1,22 @@
+/*系统管理部分css样式*/
+body {
+    background: white;
+}
+
+.sys_editdiv {
+    width: 670px;
+    margin: 50px auto 0;
+}
+
+.copyright {
+    display: none;
+}
+
+.fix-label {
+    margin-top: 8px;
+}
+
+
+.error-msg {
+    margin: -10px 0px 10px 178px;
+}

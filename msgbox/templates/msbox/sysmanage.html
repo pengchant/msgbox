@@ -10,7 +10,8 @@
 {% block bk_content %}
     <div class="sysmanage relative">
         <div class="usr_tool">
-            <button type="button" class="btn btn-primary btn_fix"><i class="glyphicon glyphicon-plus"></i> 创建</button>
+            <button type="button" id="btn_create" class="btn btn-primary btn_fix">
+                <i class="glyphicon glyphicon-plus"></i> 创建</button>
             <div class="search_tool fr">
                 选择系统状态:
                 <select class="form-control inline-text" id="">
@@ -108,4 +109,19 @@
 {# 引用的js文件 #}
 {% block bkjs %}
     <script src="{{ url_for('static', filename='js/msgbox/sysmanage.js') }}"></script>
+    <script type="text/javascript">
+        $(function () {
+
+             $("#btn_create").click(function () {
+                layer.open({
+                    type: 2,
+                    title: '创建接入系统',
+                    maxmin: true,
+                    shadeClose: true, //点击遮罩关闭层
+                    area: ['770px', '470px'],
+                    content: '{{ url_for('bn.systemadd') }}' // 新增用户页面
+                });
+            });
+        });
+    </script>
 {% endblock %}

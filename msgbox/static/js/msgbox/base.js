@@ -124,3 +124,32 @@ $.extend({
 
 
 });
+
+// 验证所有表单
+function valie_all_input() {
+    var errs = 0;
+    $(".valie-input").each(function () {
+        curval = $(this).val();
+        if (!curval) {
+            $("#" + $(this).attr("name") + "-err span").html($(this).attr("placeholder"));
+            $("#" + $(this).attr("name") + "-err").show();
+            errs++;
+        }
+    });
+    return errs;
+}
+
+
+$(function () {
+    // 当获取焦点时
+    $(".valie-input").focus(function () {
+        curname = $(this).attr("name");
+        $("#" + curname + "-err").hide();
+    });
+
+    // 关闭模态框
+    $("[data-lay-close=true]").click(function () {
+        console.log("关闭模态框");
+        $.lay_close_rightnow()
+    });
+});

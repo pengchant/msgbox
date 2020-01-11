@@ -1,0 +1,85 @@
+{% extends('base.html') %}
+
+{% block css_src %}
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/msgbox/sysmanage-sys.css") }}">
+{% endblock %}
+
+
+{% block main_body %}
+    <div class="sys_editdiv">
+        <form role="form" class="form-horizontal form-modpass" id="sysform">
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">系统名称：</label>
+                <div class="col-sm-7">
+                    <input type="text" name="sysname"
+                           value="{{ render_obj.cur_usr and render_obj.cur_usr.workerid }}"
+                           autocomplete="false"
+                           class="form-control valie-input"
+                           placeholder="请输入系统名称">
+                </div>
+            </div>
+            <div class="error-msg" id="sysname-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">系统IP：</label>
+                <div class="col-sm-7">
+                    <input type="text" name="sysip" autocomplete="false" class="form-control valie-input"
+                           placeholder="请输入系统IP">
+                </div>
+            </div>
+            <div class="error-msg" id="sysip-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">系统端口：</label>
+                <div class="col-sm-7">
+                    <input type="text" name="sysport" autocomplete="false" class="form-control valie-input"
+                           placeholder="请输入端口">
+                </div>
+            </div>
+            <div class="error-msg" id="sysport-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">系统地址：</label>
+                <div class="col-sm-7">
+                    <input type="text" name="sysurl" autocomplete="false" class="form-control valie-input"
+                           placeholder="请输入系统地址">
+                </div>
+            </div>
+            <div class="error-msg" id="sysurl-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
+
+            <div class="form-group">
+                <label for="" class="col-sm-3 text-right fix-label">系统描述：</label>
+                <div class="col-sm-7">
+                    <textarea name="sysdesc" class="form-control valie-input"
+                              placeholder="请输入系统描述"></textarea>
+                </div>
+            </div>
+            <div class="error-msg" id="sysdesc-err"><i class="fa fa-exclamation-circle"></i><span>请输入系统描述</span></div>
+
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-3 text-center">
+                    {% if render_obj.cur_usr %}
+                        <button type="button" class="btn btn-theme" id="btn_updatesys">修改系统</button> &nbsp; &nbsp;
+                    {% else %}
+                        <button type="button" class="btn btn-theme" id="btn_createsys">接入系统</button> &nbsp; &nbsp;
+                    {% endif %}
+                    <button type="button" class="btn" data-lay-close="true" id="btn_cancelsys">取消</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}
+
+{% block js_src %}
+    <script type="text/javascript">
+        {#var modi_type = "{{ render_obj.type }}";#}
+        {#var cur_depid = "{{ render_obj.cur_usr and  render_obj.cur_usr.depid }}"#}
+        {#var cur_usrid = "{{ render_obj.cur_usr and  render_obj.cur_usr.id }}"#}
+    </script>
+    <script src="{{ url_for('static', filename='js/msgbox/sysmanage-sys.js') }}"></script>
+{% endblock %}
