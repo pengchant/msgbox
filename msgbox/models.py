@@ -66,6 +66,8 @@ class User(Base, BaseModel):
     phone_num = Column(String(100))  # 手机号(预留)
     avatar_url = Column(String(255))  # 用户头像(预留)
     dep_id = Column(Integer, ForeignKey('msgbox_originzation.id'), nullable=False)  # 所在部门的编号
+    dep = relationship('Organization')  # 部门
+
     gender = Column(  # 性别(备用)
         Enum(
             "MAILE",  # 男
@@ -94,6 +96,15 @@ class User(Base, BaseModel):
     def check_password(self, password):
         # 校验密码是否正确
         return check_password_hash(self.password, password)
+
+    def to_dict(self):
+        return {
+            "id": self.id,  # 编号
+            "workerid": self.workerid,  # 用户工号
+            "usrname": self.real_name,  # 用户名
+            # "password": self.password,  # 密码
+            "depname": self.dep.depname,  # 部门名称
+        }
 
 
 class SystemMessage(Base, BaseModel):

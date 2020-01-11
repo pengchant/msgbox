@@ -3,6 +3,7 @@ from flask import render_template, request, jsonify
 from msgbox import login_required, db_session
 from msgbox.backendapp import bn
 from msgbox.models import User
+from msgbox.utils.common import page_helper_getparam, page_helper_filter
 from msgbox.utils.response_code import RET
 
 
@@ -63,3 +64,22 @@ def gomodifypass():
     """请求修改密码页面"""
     render_obj = {"url": "modifypass", "title": "修改密码"}  # 渲染的页面
     return render_template('msbox/modifypass.html', render_obj=render_obj)
+
+
+@bn.route("/filterusrinfo", methods=['GET', 'POST'])
+def filterusrinfo():
+    """
+    过滤查询用户的信息
+    :return:
+    """
+    filterobj = page_helper_getparam(request)
+    if filterobj is None:
+        return jsonify(re_code=RET.PARAMERR, msg="参数不完整")
+    result = page_helper_filter(
+        User.query.filter(),
+        filterobj,
+        lambda usrs: [v.to_dict() for v in usrs]
+    )
+    if result is None:
+        return jsonify(re_code=RET.DBERR, msg="查询失败，请稍后重试")
+    return jsonify(re_code=RET.OK, pagedInfo=result)

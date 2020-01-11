@@ -49,4 +49,49 @@ def token_required(view):
     return decorted
 
 
+def page_helper_getparam(request):
+    """
+    从request请求头中获取分页的相关参数
+    :param request:
+    :return:
+    """
+    filterobj = request.json
+    if filterobj is None:
+        return None
+    page = filterobj.get('page')
+    if page == 0:
+        page = 1
+    pagesize = filterobj.get('pagesize')
+    condition = filterobj.get('condition')
+    if not all([page, pagesize, condition]):
+        return None
+    return {
+        "page": page,
+        "pagesize": pagesize,
+        "condition": condition
+    }
 
+
+def page_helper_filter(querydata, filterobj, handler=None):
+    """
+    分页查询
+    :param querydata:
+    :param filterobj:
+    :param handler: 结果处理器
+    :return:{page:1, size:10, pages:4, total:56, data:[]} | {}
+    """
+    try:
+        total = querydata.count()
+        pages = int((total + filterobj['pagesize'] - 1) / filterobj['pagesize'])
+        pagedData = querydata.limit(filterobj['pagesize']).offset((filterobj['page'] - 1) * filterobj['pagesize'])
+        if handler is not None:
+            pagedData = handler(pagedData)
+    except Exception as e:
+        return None
+    return {
+        "page": filterobj['page'],
+        "size": filterobj['pagesize'],
+        'pages': pages,
+        "total": total,
+        "data": pagedData
+    }
