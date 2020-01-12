@@ -135,6 +135,7 @@
          * @param usrid
          */
         function modifyUsr(usrid, name) {
+            $.closeall_layer()
             layer.open({
                 type: 2,
                 title: '修改用户-' + name,
@@ -195,6 +196,7 @@
 
             // 新建打开模态框
             $("#btn_createusr").click(function () {
+                $.closeall_layer()
                 layer.open({
                     type: 2,
                     title: '创建用户',

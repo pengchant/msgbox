@@ -11,16 +11,21 @@
     <div class="sysmanage relative">
         <div class="usr_tool">
             <button type="button" id="btn_create" class="btn btn-primary btn_fix">
-                <i class="glyphicon glyphicon-plus"></i> 创建</button>
+                <i class="glyphicon glyphicon-plus"></i> 创建
+            </button>
+            <button type="button" id="btn_refresh" class="btn btn-info"><i
+                    class="glyphicon glyphicon-refresh"></i> 刷新
+            </button>
             <div class="search_tool fr">
                 选择系统状态:
-                <select class="form-control inline-text" id="">
-                    <option value="0">所有</option>
-                    <option value="1">未开启</option>
-                    <option value="2">运行中</option>
+                <select class="form-control inline-text" id="sysstate">
+                    <option value="">所有</option>
+                    <option value="CLOSED">未开启</option>
+                    <option value="RUNNING">运行中</option>
                 </select>
-                系统名称: <input type="text" class="form-control inline-text" placeholder="系统名称">
-                <button class="btn btn-warning btn_fix"><i class="glyphicon glyphicon-search"></i> 查询</button>
+                系统名称: <input id="sysname" type="text" class="form-control inline-text" placeholder="系统名称">
+                <button id="filtersearch" class="btn btn-warning btn_fix"><i class="glyphicon glyphicon-search"></i> 查询
+                </button>
 
             </div>
             <div class="syscont">
@@ -33,72 +38,82 @@
                         <th>IP</th>
                         <th>端口</th>
                         <th>地址</th>
-                        <th>状态</th>
+                        <th style="width:100px;">状态</th>
                         <th>创建时间</th>
                         <th>操作</th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Bangalore</td>
-                        <td>Bangalore</td>
-                        <td>192.168.8.51</td>
-                        <td>80</td>
-                        <td>http://192.168.8.51/login.html</td>
-                        <td>关闭</td>
-                        <td>2019-12-31 20:23</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-info">开启</button>
-                            <button type="button" class="btn btn-sm btn-success">修改</button>
-                            <button type="button" class="btn btn-sm btn-danger">删除</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>2</td>
-                        <td>Bangalore</td>
-                        <td>Bangalore</td>
-                        <td>192.168.8.51</td>
-                        <td>80</td>
-                        <td>http://192.168.8.51/login.html</td>
-                        <td>关闭</td>
-                        <td>2019-12-31 20:23</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-info">开启</button>
-                            <button type="button" class="btn btn-sm btn-success">修改</button>
-                            <button type="button" class="btn btn-sm btn-danger">删除</button>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>3</td>
-                        <td>Bangalore</td>
-                        <td>Bangalore</td>
-                        <td>192.168.8.51</td>
-                        <td>80</td>
-                        <td>http://192.168.8.51/login.html</td>
-                        <td>开启</td>
-                        <td>2019-12-31 20:23</td>
-                        <td>
-                            <button type="button" class="btn btn-sm btn-warning">关闭</button>
-                            <button type="button" class="btn btn-sm btn-success">修改</button>
-                            <button type="button" class="btn btn-sm btn-danger">删除</button>
-                        </td>
-                    </tr>
-
-
+                    {# 使用raw是为了让js的art-template渲染页面 #}
+                    {% raw %}
+                    <tbody id="systbody">
+                    <script type="text/html" id="tableTemp">
+                        <%  if (item.data.length == 0) { %>
+                        <tr>
+                            <td colspan="9" class="text-center">暂无数据</td>
+                        </tr>
+                        <% } else { %>
+                        <%for(let i = 0; i < item.data.length; i++){%>
+                        <tr>
+                            <td><%=((item.page - 1)*item.size+ i + 1)%></td>
+                            <td><%=item.data[i].sysname %></td>
+                            <td><%=item.data[i].sysdes %></td>
+                            <td><%=item.data[i].sysip %></td>
+                            <td><%=item.data[i].sysport %></td>
+                            <td><%=item.data[i].sysurl %></td>
+                            <td class="<%= (item.data[i].sysstatus =='已关闭')?'text-danger':'text-success' %>">
+                                <i class="glyphicon  <%= (item.data[i].sysstatus !='已关闭')?'glyphicon-play-circle':'glyphicon-ban-circle' %>"></i>
+                                <%=item.data[i].sysstatus %>
+                            </td>
+                            <td><%=item.data[i].createtime %></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button type="button" class="btn dropdown-toggle" id="dropdownMenu1"
+                                            data-toggle="dropdown" data-hover="dropdown">
+                                        操作
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                        <li role="presentation">
+                                            <a role="menuitem"
+                                               onclick="seekey('{{ item.data[i].id }}', '{{ item.data[i].sysname }}')"
+                                               tabindex="-1"
+                                               href="javascript:;"><i class="glyphicon glyphicon-envelope"></i>&nbsp;查看秘钥</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a role="menuitem" tabindex="-1"
+                                               onclick="modify('{{ item.data[i].id }}', '{{ item.data[i].sysname }}')"
+                                               href="javascript:;"><i class="glyphicon glyphicon-file"></i>&nbsp;修改</a>
+                                        </li>
+                                        <li role="presentation">
+                                            <a role="menuitem" tabindex="-1" onclick="delsys('{{ item.data[i].id }}')"
+                                               href="javascript:;"><i class="glyphicon glyphicon-trash"></i>&nbsp;删除</a>
+                                        </li>
+                                        <% if(item.data[i].sysstatus=="已关闭") {%>
+                                        <li role="presentation">
+                                            <a role="menuitem" onclick="start('{{ item.data[i].id  }}')"
+                                               class="text-success" tabindex="-1"
+                                               href="javascript:;"><i class="glyphicon glyphicon-play-circle"></i>&nbsp;开启</a>
+                                        </li>
+                                        <% } else { %>
+                                        <li role="presentation">
+                                            <a role="menuitem" onclick="stop('{{ item.data[i].id  }}')"
+                                               class="text-danger" tabindex="-1"
+                                               href="javascript:;"><i class="glyphicon glyphicon-ban-circle"></i>&nbsp;关闭</a>
+                                        </li>
+                                        <% } %>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <%}%>
+                        <% } %>
+                    </script>
                     </tbody>
+                    {% endraw %}
                 </table>
-                <div class="text-center stick_button">
+                <div class="text-center">
+                    <!-- 分页部分 -->
                     <ul class="pagination">
-                        <li><a href="#">&laquo;</a></li>
-                        <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                        <li><a href="#">5</a></li>
-                        <li><a href="#">&raquo;</a></li>
                     </ul>
                 </div>
             </div>
@@ -110,9 +125,134 @@
 {% block bkjs %}
     <script src="{{ url_for('static', filename='js/msgbox/sysmanage.js') }}"></script>
     <script type="text/javascript">
+        /**
+         * 查看秘钥
+         * @param sysid
+         */
+        function seekey(sysid, sysname) {
+            console.log("查看秘钥", sysid)
+            layer.open({
+                type: 2,
+                title: "查看秘钥-" + sysname,
+                area: ['550px', '260px'],
+                shadeClose: false, //点击遮罩关闭
+                content: '{{ url_for('bn.getappkey') }}' + "?sysid=" + sysid
+            });
+        }
+
+        /**
+         * 修改系统信息
+         * @param id
+         * @param sysname
+         */
+        function modify(id, sysname) {
+            console.log("修改系统信息", id, sysname)
+            layer.open({
+                type: 2,
+                title: "修改系统信息-" + sysname,
+                area: ['770px', '470px'],
+                shadeClose: false, //点击遮罩关闭
+                content: '{{ url_for('bn.modisys') }}' + "?sysid=" + id
+            });
+        }
+
+        /**
+         * 删除系统信息
+         * @param id
+         */
+        function delsys(id) {
+            console.log("删除系统信息", id)
+            swal("确定删除该系统吗?", {
+                icon: 'info',
+                buttons: {
+                    catch: {
+                        text: "删除",
+                        value: "catch"
+                    },
+                    cancel: '取消',
+                }
+            }).then(function (r) {
+                if (r == "catch") {
+                    $.post("/removesys?sysid=" + id, function (data) {
+                        handleresult(data)
+                    })
+                }
+            });
+        }
+
+        function handleresult(data) {
+            if (data && data.re_code == "0") {
+                swal(data.msg, {
+                    icon: 'success',
+                    button: false,
+                    timer: 1200,
+                })
+                setTimeout(function () {
+                    location.reload()
+                }, 1100)
+            } else {
+                swal(data.msg, {
+                    icon: 'error',
+                    button: false,
+                    timer: 1200,
+                })
+            }
+        }
+
+        /**
+         * 开启系统
+         * @param id
+         */
+        function start(id) {
+            console.log("start::", id)
+            swal("确定开启系统吗?", {
+                icon: 'info',
+                buttons: {
+                    catch: {
+                        text: "确定",
+                        value: "sure"
+                    },
+                    cancel: '取消',
+                }
+            }).then(function (r) {
+                if (r == "sure") {
+                    $.post("/startsys?sysid=" + id, function (data) {
+                        handleresult(data)
+                    })
+                }
+            });
+        }
+
+        /**
+         * 结束运行
+         * @param id
+         */
+        function stop(id) {
+            console.log("stop:", id)
+            swal("确定关闭系统吗?", {
+                icon: 'info',
+                buttons: {
+                    catch: {
+                        text: "确定",
+                        value: "sure"
+                    },
+                    cancel: '取消',
+                }
+            }).then(function (r) {
+                if (r == "sure") {
+                    $.post("/stopsys?sysid=" + id, function (data) {
+                        handleresult(data)
+                    })
+                }
+            });
+        }
+
+
         $(function () {
 
-             $("#btn_create").click(function () {
+            // 创建系统
+            $("#btn_create").click(function () {
+                $.closeall_layer()
                 layer.open({
                     type: 2,
                     title: '创建接入系统',

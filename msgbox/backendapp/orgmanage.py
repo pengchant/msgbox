@@ -1,13 +1,14 @@
 from flask import request, jsonify
 from sqlalchemy import exists
 
-from msgbox import db_session
+from msgbox import db_session, login_required
 from msgbox.backendapp import bn
 from msgbox.models import Organization
 from msgbox.utils.response_code import RET
 
 
 @bn.route("/allorg", methods=['GET', 'POST'])
+@login_required
 def getallorg():
     """获取所有的组织"""
     orgs = db_session.query(Organization).filter(Organization.pid >= 0).all()
@@ -16,6 +17,7 @@ def getallorg():
 
 
 @bn.route("/addorg", methods=['POST'])
+@login_required
 def addorg():
     """新增组织:
     0.校验请求参数
@@ -49,6 +51,7 @@ def addorg():
 
 
 @bn.route("/modiorg", methods=['POST'])
+@login_required
 def modiorg():
     """修改组织名称"""
     id = request.form.get("id")
@@ -69,6 +72,7 @@ def modiorg():
 
 
 @bn.route("/delorg", methods=["POST"])
+@login_required
 def delorg():
     """删除组织"""
     id = request.args.get("orgid")

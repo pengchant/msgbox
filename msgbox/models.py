@@ -10,7 +10,7 @@ from msgbox.db import Base
 
 class BaseModel(object):
     """模型基类"""
-    create_time = Column(DateTime, default=datetime.utcnow())  # 记录模型的创建时间
+    create_time = Column(DateTime, default=datetime.now())  # 记录模型的创建时间
     update_time = Column(DateTime, default=datetime.now(), onupdate=datetime.now())  # 记录模型更新时间
 
 
@@ -53,6 +53,27 @@ class ServiceSystem(Base, BaseModel):
         default="CLOSED", index=True
     )
     pushed_msglist = relationship("SystemMessage", backref="msgbox_servicesystem", lazy="dynamic")  # 某系统下所有推送的消息
+
+    def to_dict(self):
+        """返回字典"""
+        return {
+            "id": self.id,
+            "sysname": self.sysname,
+            "sysip": self.sysip,
+            "sysport": self.sysport,
+            "sysurl": self.sysurl,
+            "sysdes": self.sysdescription,
+            "sysstatus": "已关闭" if self.status == "CLOSED" else "已开启",
+            "createtime": self.create_time.strftime(format="%Y-%m-%d %H:%M")
+        }
+
+    def to_appkey_dict(self):
+        """返回app的秘钥"""
+        return {
+            "appid": self.id,
+            "appkey": self.appkey,
+            "apptoken": self.appsecrect
+        }
 
 
 class User(Base, BaseModel):

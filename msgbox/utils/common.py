@@ -1,3 +1,5 @@
+import hashlib
+import time
 from functools import wraps
 
 from flask import session, jsonify, request, g, redirect, url_for
@@ -95,3 +97,17 @@ def page_helper_filter(querydata, filterobj, handler=None):
         "total": total,
         "data": pagedData
     }
+
+
+def generate_secrectkey(val, secstr):
+    """生成appsecrect"""
+    tempstr = val + str(time.time()) + secstr
+    return sha256hex(tempstr)
+
+
+def sha256hex(data):
+    """sha256加密"""
+    sha256 = hashlib.sha256()
+    sha256.update(data.encode())
+    res = sha256.hexdigest()
+    return res

@@ -1,8 +1,7 @@
 /*系统管理部分css样式*/
 .sysmanage {
     width: 100%;
-    height: 700px;
-    /*border: solid 1px red;*/
+    height: 740px;
 }
 
 .usr_tool {
@@ -19,4 +18,14 @@
 
 .syscont {
     margin-top: 20px;
+}
+
+
+#btn_refresh {
+    margin-left: 16px;
+    margin-top: -5px;
+}
+
+.dropdown-menu {
+    min-width:80px;
 }

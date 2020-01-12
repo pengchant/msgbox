@@ -70,6 +70,30 @@ $(function () {
         zTree_Menu.expandNode(node, true, false);//指定选中ID节点展开
     }
 
+    // 当获取焦点时
+    $("input.vali-input").focus(function () {
+        curname = $(this).attr("name");
+        $("#" + curname + "-err").hide();
+    });
+
+    // 验证所有表单
+    function vali_all() {
+        var errs = 0;
+        $("input.vali-input").each(function () {
+            // 如果是修改状态，则忽略password的校验
+            if (modi_type == 'modi' && $(this).attr("type") == "password") {
+                return true
+            }
+            curval = $(this).val();
+            if (!curval) {
+                $("#" + $(this).attr("name") + "-err span").html($(this).attr("placeholder"));
+                $("#" + $(this).attr("name") + "-err").show();
+                errs++;
+            }
+        });
+        return errs;
+    }
+
 
     // 提交用户
     $("#btn_createusr").click(function () {

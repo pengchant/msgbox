@@ -19,6 +19,17 @@ $.fn.serializeObject = function () {
 };
 
 $.extend({
+
+    /**
+     * 关闭所有模态框
+     */
+    closeall_layer: function () {
+        try {
+            layer.closeAll()
+        } catch (e) {
+            e.error("缺少layer支持")
+        }
+    },
     /**
      * 延时关闭layui自身
      */

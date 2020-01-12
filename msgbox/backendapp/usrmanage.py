@@ -16,6 +16,7 @@ def gousrmanage():
 
 
 @bn.route("/usradd", methods=['GET', 'POST'])
+@login_required
 def usradd():
     """添加用户"""
     if request.method == "GET":
@@ -50,6 +51,7 @@ def usradd():
 
 
 @bn.route("/usrmodi", methods=['GET', 'POST'])
+@login_required
 def usrmodi():
     """修改用户信息"""
     usrid = request.args.get("usrid")
@@ -82,6 +84,7 @@ def usrmodi():
 
 
 @bn.route("/usrdel", methods=['POST'])
+@login_required
 def usrdel():
     """删除用户信息"""
     usrid = request.args.get("usrid")
@@ -97,6 +100,7 @@ def usrdel():
 
 
 @bn.route("/modifypass", methods=['GET'])
+@login_required
 def gomodifypass():
     """请求修改密码页面"""
     render_obj = {"url": "modifypass", "title": "修改密码"}  # 渲染的页面
@@ -104,6 +108,7 @@ def gomodifypass():
 
 
 @bn.route("/filterusrinfo", methods=['GET', 'POST'])
+@login_required
 def filterusrinfo():
     """
     过滤查询用户的信息
