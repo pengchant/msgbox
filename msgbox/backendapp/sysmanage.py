@@ -104,6 +104,10 @@ def removesys():
     sys = ServiceSystem.query.filter(ServiceSystem.id == sysid).first()
     if sys is None:
         return jsonify(re_code=RET.PARAMERR, msg="不存在该系统")
+
+    if sys.status == "OPENING":
+        return jsonify(re_code=RET.PARAMERR, msg="已运行的系统不能删除")
+
     try:
         db_session.delete(sys)
         db_session.commit()
