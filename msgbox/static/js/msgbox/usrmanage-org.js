@@ -207,7 +207,11 @@ $(function () {
         if (treeNode.id) { // 重命名
             modifyorg(treeNode.id, treeNode.name)
         } else { // 新增节点
-            newOrg(treeNode.name, treeNode.getParentNode().id)
+            if (treeNode.getParentNode()) {
+                newOrg(treeNode.name, treeNode.getParentNode().id)
+            } else {
+                newOrg(treeNode.name, "0")
+            }
         }
     }
 
@@ -303,10 +307,10 @@ $(function () {
             //         zTree.removeNode(nodes[0]);
             //     }
             // } else {
-                if (confirm("你确定要删除吗")) {
-                    zTree.removeNode(nodes[0]);
-                    onRemove(null, null, nodes[0]);
-                }
+            if (confirm("你确定要删除吗")) {
+                zTree.removeNode(nodes[0]);
+                onRemove(null, null, nodes[0]);
+            }
             // }
         }
     });
