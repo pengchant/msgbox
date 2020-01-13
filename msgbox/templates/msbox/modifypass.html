@@ -9,29 +9,43 @@
 {# 主要内容部分 #}
 {% block bk_content %}
     <div class="modifypass">
-        <form role="form" class="form-horizontal form-modpass">
+        <form role="form" class="form-horizontal form-modpass" id="changepwdform">
 
             <div class="form-group">
                 <label for="" class="col-sm-3 text-right fix-label">输入原密码：</label>
                 <div class="col-sm-7">
-                    <input type="password" autocomplete="false" class="form-control" placeholder="请输入原密码">
+                    <input type="password" name="oripass" id="oripass" autocomplete="false"
+                           class="form-control valie-input"
+                           placeholder="请输入原密码">
                 </div>
             </div>
+            <div class="error-msg" id="oripass-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
             <div class="form-group">
                 <label for="" class="col-sm-3 text-right fix-label">输入新密码：</label>
                 <div class="col-sm-7">
-                    <input type="password" autocomplete="false" class="form-control" placeholder="请输入新密码">
+                    <input type="password" name="newpass" id="newpass" autocomplete="false"
+                           class="form-control valie-input"
+                           placeholder="请输入新密码">
                 </div>
             </div>
+            <div class="error-msg" id="newpass-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
             <div class="form-group">
                 <label for="" class="col-sm-3 text-right fix-label">确认新密码：</label>
                 <div class="col-sm-7">
-                    <input type="password" autocomplete="false" class="form-control" placeholder="再次输入新密码">
+                    <input type="password" name="surepass"
+                           data-refer-same="newpass" data-refer-same-err="确认密码和新密码不一致"
+                           id="surepass" autocomplete="false"
+                           class="form-control valie-input"
+                           placeholder="再次输入新密码">
                 </div>
             </div>
+            <div class="error-msg" id="surepass-err"><i class="fa fa-exclamation-circle"></i><span></span></div>
+
             <div class="form-group">
                 <div class="col-sm-7 col-sm-offset-3">
-                    <button type="submit" class="btn btn-theme btn-block">修改密码</button>
+                    <button type="button" class="btn btn-theme btn-block" id="btn_modifypass">修改密码</button>
                 </div>
             </div>
 
@@ -41,5 +55,6 @@
 
 {# 引用的js文件 #}
 {% block bkjs %}
-    <script src="{{ url_for('static', filename="s/msgbox/modifypass.js") }}"></script>
+    <script src="{{ url_for("static", filename="js/md5.min.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/msgbox/modifypass.js") }}"></script>
 {% endblock %}

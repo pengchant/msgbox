@@ -33,11 +33,14 @@ $.extend({
     /**
      * 延时关闭layui自身
      */
-    lay_close_self: function () {
+    lay_close_self: function (afterhandler) {
         setTimeout(function () {
             parent.location.reload(true);//刷新父级页面
             var index = parent.layer.getFrameIndex(window.name);
             parent.layer.close(index);
+            if (afterhandler && afterhandler instanceof Function) {
+                afterhandler()
+            }
         }, 1100)
     },
 
@@ -141,10 +144,22 @@ function valie_all_input() {
     var errs = 0;
     $(".valie-input").each(function () {
         curval = $(this).val();
+        // 判断空
         if (!curval) {
             $("#" + $(this).attr("name") + "-err span").html($(this).attr("placeholder"));
             $("#" + $(this).attr("name") + "-err").show();
             errs++;
+        }
+
+        // 校验是否与指定的输入框值一致
+        newpass_name = $(this).attr("data-refer-same")
+        if (newpass_name && curval) {
+            newpass_val = $("input[name=" + newpass_name + "]").val()
+            if (newpass_val && curval != newpass_val) {
+                $("#" + $(this).attr("name") + "-err span").html($(this).attr("data-refer-same-err"));
+                $("#" + $(this).attr("name") + "-err").show();
+                errs++;
+            }
         }
     });
     return errs;

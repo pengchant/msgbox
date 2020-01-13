@@ -1,6 +1,7 @@
 """后端应用通行证"""
 from flask import render_template, request, jsonify, redirect, url_for, session
 
+from msgbox import login_required, db_session
 from msgbox.backendapp import bn
 from msgbox.models import User
 from msgbox.utils.response_code import RET
@@ -43,8 +44,41 @@ def login():
 
 
 @bn.route("/logout", methods=['POST', 'GET'])
+@login_required
 def logout():
     """退出登录"""
     session.pop("user_id")
     session.pop("user_name")
     return jsonify(re_code=RET.OK, msg="退出成功")
+
+
+@bn.route("/changepwd", methods=['GET', 'POST'])
+@login_required
+def changepwd():
+    """修改密码"""
+    usrid = session.get("user_id")
+    oldpwd = request.form.get("oripass")
+    newpwd = request.form.get("newpass")
+    surepwd = request.form.get("surepass")
+
+    if not all([newpwd, surepwd]):
+        return jsonify(re_code=RET.PARAMERR, msg="参数不完整")
+
+    if newpwd != surepwd:
+        return jsonify(re_code=RET.PARAMERR, msg="两次密码输入不一致")
+
+    try:
+        u = User.query.filter(User.id == usrid).first()
+        if not u.check_password(oldpwd):
+            return jsonify(re_code=RET.PARAMERR, msg="旧密码错误")
+
+        if u.check_password(newpwd):
+            return jsonify(re_code=RET.PARAMERR, msg="新密码不能与现有的密码重复")
+
+        u.password_hash = newpwd
+        db_session.commit()
+        session.pop("user_id")
+        session.pop("user_name")
+        return jsonify(re_code=RET.OK, msg="修改密码成功,请重新登录")
+    except Exception as e:
+        return jsonify(re_code=RET.DBERR, msg="修改密码失败,请稍后重试")
