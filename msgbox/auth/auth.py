@@ -12,16 +12,18 @@ class JWTUtils:
     """
 
     @staticmethod
-    def encode_auth_token(user_id, login_time):
+    def encode_auth_token(user_id, login_time, timedela=None):
         """
         生成认证token
-        :param user_id: int 用户编号
+        :param user_id: int 用户编号/其他的标识
         :param login_time: int(timestamp) 登录时间
         :return: string
         """
         try:
-            payload = {'usr_id': user_id, 'login_time': login_time};
-            token = jwt.generate_jwt(payload, key, 'HS256', datetime.timedelta(minutes=1))
+            payload = {'usr_id': user_id, 'login_time': login_time}
+            if timedela is None:
+                timedela = datetime.timedelta(days=7)  # 默认为7天后失效
+            token = jwt.generate_jwt(payload, key, 'HS256', timedela)
             return token
         except Exception as e:
             return None

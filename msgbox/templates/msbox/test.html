@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block css_src %}
+    <style>
+        body {
+            background: white;
+        }
+
+        .copyright {
+            display: none;
+        }
+
+        .wrapper {
+            width: 80%;
+            margin: 30px auto 0;
+        }
+
+
+    </style>
+{% endblock %}
+
+{% block main_body %}
+    <div class="wrapper">
+        <h1>Step1：获取token:</h1>
+        <input type="text" class="form-control" id="appkey" name="appkey" placeholder="appkey"/>
+        <br>
+        <input type="text" class="form-control" id="appsecrect" name="appsecrect" placeholder="appsecrect"/>
+        <br>
+        <button type="button" class="btn btn-primary" onclick="gettoken()">获取token</button>
+        <br>
+        <p>
+            <span> 获取到的token:</span>
+            <br>
+            <textarea rows="5" id="tokendisplay" class="form-control"></textarea>
+        </p>
+        <hr>
+        <h1>Step2：推送消息:</h1>
+        <label for="">工号:</label>
+        <input type="text" class="form-control" name="workerid" id="workerid"/>
+        <br>
+        <label for="">超链接:</label>
+        <input type="text" class="form-control" name="sysurl" id="sysurl">
+        <br>
+        <label for="">描述</label>
+        <input type="text" class="form-control" name="description" id="description"/>
+        <br>
+        <button class="btn btn-danger" onclick="pushmsg()">推送</button>
+    </div>
+{% endblock %}
+
+{% block js_src %}
+    <script src="{{ url_for('static', filename='js/sha256.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/base64.min.js') }}"></script>
+    <script type="text/javascript">
+        /**
+         * 获取token
+         */
+        function gettoken() {
+            appkey = $("#appkey").val()
+            appsecrect = $("#appsecrect").val()
+            var tmp = Date.parse(new Date()).toString();
+            tmp = tmp.substr(0, 10);
+            var url = "/api/v1.0/getSignature?appkey=" + appkey + " " + tmp;
+            var shastr = sha256.hmac(appsecrect, url);
+            var data = Base64.encode(shastr);
+            $.ajax({
+                url: '/api/v1.0/getSignature?appkey=' + appkey,
+                type: "post",
+                beforeSend: function (request) {
+                    request.setRequestHeader("timestap", tmp);
+                    request.setRequestHeader("signature", data);
+                    request.setRequestHeader("accesstoken", appkey)
+                },
+                data: {
+                    appkey: appkey
+                }
+            }).then(function (resp) {
+                console.log(resp)
+                if (resp.re_code == "0") {
+                    $("#tokendisplay").html(resp.data)
+                } else {
+                    alert(resp.msg)
+                }
+            })
+        }
+
+
+        /**
+         * 推送消息
+         */
+        function pushmsg() {
+            appkey = $("#appkey").val()
+            workerid = $("#workerid").val()
+            url = $("#sysurl").val()
+            des = $("#description").val()
+            token = $.trim($("#tokendisplay").val())
+            obj = {
+                "tousr": workerid,
+                "url": url,
+                "des": des
+            };
+            console.log("待推送的消息", obj)
+            $.ajax({
+                url: "/api/v1.0/pushmsg?appkey=" + appkey,
+                type: 'post',
+                dataType: 'json',
+                async: false,
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(obj),
+                beforeSend: function (request) {
+                    request.setRequestHeader("Authorization", token)
+                },
+                success: function (result) {
+                    alert(result.msg)
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
