@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>测试socket</title>
+    <script src="{{ url_for('static', filename="js/jquery.min.js") }}"></script>
+    <script src="{{ url_for('static', filename="js/socket.io.js") }}"></script>
+</head>
+<body>
+测试websocket通信:
+<div class="socketwrapper" id="time" style="width:300px;height:300px;border:solid 1px gray;">
+</div>
+
+<input type="text" name="msg" id="msg" placeholder="请输入要发送给服务器端的消息"/>
+<br>
+<button id="sendmsg" type="button">发送</button>
+<script>
+    $(function () {
+        var socket = io.connect('ws://127.0.0.1:5000/websocket/user_refresh?token=124254325432');
+        socket.on('connect', function () {
+            socket.emit("connect_event", {data: '成功连接服务器...(from client)', workerid: "189070019"})
+        });
+
+        socket.on('server_response', function (msg) {
+            console.log(msg)
+        });
+
+        socket.on("server_respchat", function (msg) {
+            textnode = document.createTextNode(msg.data)
+            $("#time").append(textnode).append($("<br/>"))
+            $("#msg").val("")
+        });
+
+        // 点击发送
+        $("#sendmsg").click(function () {
+            var msg = $("#msg").val()
+            socket.emit("receive_msg", {data: msg})
+        });
+
+
+    });
+</script>
+
+
+</body>
+</html>

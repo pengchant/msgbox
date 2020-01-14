@@ -36,6 +36,24 @@ def login_required(view):
     return wrapped_view
 
 
+def json_param_required(view):
+    """
+    json格式数据装饰器
+    :param view:
+    :return:
+    """
+
+    @wraps(view)
+    def wrapped_view(**kwargs):
+        jsonobj = request.json
+        if jsonobj:
+            return view(**kwargs)
+        else:
+            return jsonify(re_code=RET.PARAMERR, msg="请提交json格式数据")
+
+    return wrapped_view
+
+
 def token_required(view):
     """
     token校验器

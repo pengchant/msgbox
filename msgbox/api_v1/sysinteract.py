@@ -19,6 +19,12 @@ def test():
     return render_template("msbox/test.html")
 
 
+@api.route("/testsocket", methods=["GET", "POST"])
+def testsocket():
+    """测试推送消息"""
+    return render_template("msbox/testsocket.html")
+
+
 @api.route("/getSignature", methods=["GET", "POST"])
 @check_thirdpart_sys
 def gettoken():

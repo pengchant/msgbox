@@ -11,7 +11,7 @@ from msgbox.config import APP_ENV
 from .config import config
 from .db import db_session
 
-# from .socketserver import socketio
+from .socketserver import socketio
 from .utils.common import login_required
 
 redis_conn = None
@@ -51,7 +51,7 @@ def create_app():
     session.init_app(app)
 
     # 配置websocket
-    # socketio.init_app(app)
+    socketio.init_app(app)
 
     # 注册api_v1_0蓝图
     from msgbox.api_v1 import api
@@ -63,11 +63,11 @@ def create_app():
 
     @app.teardown_appcontext
     def shutdown_session(excetpion=None):
-        '''请求结束关闭连接'''
+        """请求结束关闭连接"""
         db_session.remove()
 
     @app.route("/", methods=['GET'])
-    # @login_required
+    @login_required
     def index():
         """进入后端首页"""
         return redirect(url_for('bn.gousrmanage'))
