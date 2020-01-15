@@ -1,0 +1,3 @@
+graft msgbox/static
+graft msgbox/templates
+global-exclude *.pyc

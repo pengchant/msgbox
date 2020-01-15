@@ -22,10 +22,10 @@ def passport():
     if not all([workerid, password]):
         return jsonify(re_code=RET.PARAMERR, msg="提交参数不完整")
     user = User.query.filter(User.workerid == workerid).first()
-    if not User:
+    if user is None:
         return jsonify(re_code=RET.PARAMERR, msg="该用户不存在")
     if not user.check_password(password):
         return jsonify(re_code=RET.PARAMERR, msg="密码错误")
     # 如果校验通过,生成token
     token = JWTUtils.encode_auth_token(user.workerid, str(time.time()))
-    return jsonify(re_code=RET.OK, data=token)
+    return jsonify(re_code=RET.OK, data=token, usr=user.to_dict())
