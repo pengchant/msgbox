@@ -67,6 +67,13 @@ class ServiceSystem(Base, BaseModel):
             "createtime": self.create_time.strftime(format="%Y-%m-%d %H:%M")
         }
 
+    def to_sys_simple_dict(self):
+        """返回简要字典数据"""
+        return {
+            "id": self.id,
+            "sysname": self.sysname
+        }
+
     def to_appkey_dict(self):
         """返回app的秘钥"""
         return {
@@ -156,3 +163,11 @@ class SystemMessage(Base, BaseModel):
         ),
         default="WAITTING_SEND", index=True
     )
+
+    def to_dict(self):
+        """返回字典"""
+        return {
+            "id": self.id,
+            "msg_title": self.msg_title,
+            "msg_push_time": self.msg_push_time,
+        }

@@ -3,9 +3,10 @@ import functools
 
 import click
 from flask import request
-from flask_socketio import SocketIO, emit, join_room
+from flask_socketio import emit, SocketIO
 
 from msgbox.auth.auth import JWTUtils
+from msgbox.utils.msg_socket_tool import setWorkeridSidMapper, getSIdByWorkerId
 
 socketio = SocketIO(cors_allowed_origins="*")  # 基于flask_socketio实现服务器端与客户端的消息推送
 
@@ -18,7 +19,7 @@ def init_app(app):
 
 def start_socket_server(app):
     """开启socket服务器"""
-    click.info("开启socket服务器.5000")
+    click.echo("开启socket服务器.5000")
     socketio.run(app=app, host="0.0.0.0", port=5000)
 
 
@@ -57,18 +58,20 @@ def refresh_message(message):
     """ 服务端接受客户端发送的通信请求 """
     # todo：添加room
     print(message)
-    emit('server_response', {'data': "请求成功"})
+    # 将workerid->sid 的 映射放入redis缓存中
+    sid = request.sid
+    flag = setWorkeridSidMapper(sid, message.get("workerid"))
+    if flag:
+        emit('server_response', {'data': "请求成功" + sid}, room=sid)
+    else:
+        emit("server_response", {'data': '请求失败'}, room=sid)
 
 
 @socketio.on("receive_msg", namespace="/websocket/user_refresh")
 def receive_msg(msg):
     """接收到来自客户端的消息"""
     strmsg = msg['data']
-    emit("server_respchat", {'data': request.sid + ":" + strmsg}, broadcast=True)
-
-
-def sendMsg(workerid, data):
-    """给指定的用户发送消息"""
+    emit("server_respchat", {'data': "你发送了：" + strmsg})
 
 
 @socketio.on_error()
@@ -85,3 +88,14 @@ def error_handler_chat(e):
 def default_error_handler(e):
     print(request.event["message"])  # "my error event"
     print(request.event["args"])
+
+
+def websocket_pushmsg(data, workerid):
+    """
+    推送消息给客户端
+    :param data:
+    :param workerid:
+    :return:
+    """
+    roomid = str(getSIdByWorkerId(workerid), encoding="utf-8")
+    socketio.emit("push_message", data, namespace="/websocket/user_refresh", room=roomid)

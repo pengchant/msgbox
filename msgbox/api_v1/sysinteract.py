@@ -11,6 +11,7 @@ from msgbox.auth.auth import JWTUtils
 from msgbox.models import ServiceSystem, User, SystemMessage
 from msgbox.utils.common import check_thirdpart_sys, token_required
 from msgbox.utils.response_code import RET
+from msgbox.socketserver import socketio, websocket_pushmsg
 
 
 @api.route("/test", methods=["GET", "POST"])
@@ -67,7 +68,7 @@ def pushmsg():
         return jsonify(re_code=RET.PARAMERR, msg="查无次系统")
     # 校验用户
     usr = User.query.filter(User.workerid == touser).first()
-    if not usr:
+    if usr is None:
         return jsonify(re_code=RET.PARAMERR, msg="发送消息失败，该用户不存在，请联系管理员添加当前用户(工号):" + touser)
     # 消息入库
     msg = SystemMessage()
@@ -79,7 +80,12 @@ def pushmsg():
     try:
         db_session.add(msg)
         db_session.commit()
-        # TODO:尝试推送给客户端
+        # todo:推送给客户端消息
+        websocket_pushmsg({
+            "msg_id": msg.id,
+            "msg_title": msg.msg_title,
+            "msg_url": msg.msg_url
+        }, usr.workerid)
         return jsonify(re_code=RET.OK, msg="推送消息成功")
     except  Exception as e:
         return jsonify(re_code=RET.DBERR, msg="推送消息失败，请稍后重试")

@@ -2,16 +2,15 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 import redis
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, url_for, redirect
 from flask_cors import CORS
 from flask_session import Session
 
-from msgbox import db, config
+from msgbox import db, config, socketserver
 from msgbox.config import APP_ENV
 from .config import config
 from .db import db_session
 
-from .socketserver import socketio
 from .utils.common import login_required
 
 redis_conn = None
@@ -51,7 +50,7 @@ def create_app():
     session.init_app(app)
 
     # 配置websocket
-    socketio.init_app(app)
+    socketserver.init_app(app)
 
     # 注册api_v1_0蓝图
     from msgbox.api_v1 import api

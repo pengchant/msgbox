@@ -34,6 +34,10 @@
             $("#msg").val("")
         });
 
+        socket.on("push_message", function (msg) {
+            console.log("来自服务器端的消息", msg)
+        });
+
         // 点击发送
         $("#sendmsg").click(function () {
             var msg = $("#msg").val()
