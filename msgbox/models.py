@@ -169,5 +169,5 @@ class SystemMessage(Base, BaseModel):
         return {
             "id": self.id,
             "msg_title": self.msg_title,
-            "msg_push_time": self.msg_push_time,
+            "msg_push_time": self.msg_push_time.strftime(format="%Y-%m-%d %H:%M"),
         }

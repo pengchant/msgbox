@@ -1,42 +1,43 @@
 """
 客户端的服务
 """
-from datetime import datetime
 
 from flask import request, jsonify
-from sqlalchemy import or_, and_, cast, DATE
 
+from msgbox import db_session
 from msgbox.api_v1 import api
-from msgbox.models import ServiceSystem, User, SystemMessage
+from msgbox.models import User, SystemMessage
+from msgbox.utils.common import json_param_required
+from msgbox.utils.messge_util import get_usr_msg
 from msgbox.utils.response_code import RET
 
 
-@api("/client-fetch", methods=['POST', 'GET'])
+@api.route("/client_update_msg", methods=['POST', 'GET'])
+@json_param_required
 def clientFetchData():
     """
-    抓取data
+    批量更新消息的状态，然后返回最新的消息
     :return:
     """
-    workerid = request.args.get("workerid")
-    if not workerid:
-        return jsonify(re_code=RET.PARAMERR, msg="工号不能为空")
+    # 获取工号和消息编号
+    jsonobj = request.json
+    workerid = jsonobj.get("workerid")
+    msgslist = jsonobj.get("msgs")
+
+    if not all([workerid, msgslist]):
+        return jsonify(re_code=RET.PARAMERR, msg="参数不完整")
+
     # 根据workerid查询用户的信息
     usr = User.query.filter(User.workerid == workerid).first()
     if usr is None:
         return jsonify(re_code=RET.PARAMERR, msg="工号非法")
+
     try:
-        # 抓取所有的系统(OPENING)
-        sys = ServiceSystem.query.filter(ServiceSystem.status == "OPENING").all()
-        sys_dir = [v.to_sys_simple_dict() for v in sys]  # 所有开启的系统
-        # 抓取所有的未读的消息(1.未读消息，2.已读的【当天可继续查看】)
-        dat = datetime.date.today()
-        msgs = SystemMessage.query.filter(or_(
-            and_(SystemMessage.to_usr_id == usr.id,
-                 SystemMessage.msg_status == 'WAITTING_READ'),
-            and_(SystemMessage.msg_status == "HAVE_READED",
-                 cast(SystemMessage.msg_read_time, DATE) == dat)
-        )).all()
-        msgs_dir = [v.to_dict() for v in msgs]
-        return jsonify(re_code=RET.OK, data={"sys": sys_dir, "msg": msgs_dir})
+        # 根据消息编号更新信息
+        msg = SystemMessage.query.filter(SystemMessage.id.in_(tuple(msgslist))).update(
+            {SystemMessage.msg_status: 'WAITTING_READ'})
+        msg.status = "WAITTING_READ"
+        db_session.commit()
+        return jsonify(re_code=RET.OK, data=get_usr_msg(usr.id))
     except Exception as e:
         return jsonify(re_code=RET.DBERR, msg="查询数据失败，请稍后重试")

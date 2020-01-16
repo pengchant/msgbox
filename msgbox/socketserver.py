@@ -2,10 +2,11 @@
 import functools
 
 import click
-from flask import request
+from flask import request, jsonify
 from flask_socketio import emit, SocketIO
 
 from msgbox.auth.auth import JWTUtils
+from msgbox.utils.messge_util import get_unsend_msg
 from msgbox.utils.msg_socket_tool import setWorkeridSidMapper, getSIdByWorkerId
 
 socketio = SocketIO(cors_allowed_origins="*")  # 基于flask_socketio实现服务器端与客户端的消息推送
@@ -44,7 +45,7 @@ def authenticated_only(f):
 def connect():
     """ Connection Events 客户端发起通信请求 """
     click.echo("==== Connection Events 有客户端尝试连接socket  ====")
-    emit('server_response', {'data': '试图连接服务器端！'})
+    emit('server_response', {'data': '*****试图连接服务器端*****'})
 
 
 @socketio.on('disconnect', namespace="/websocket/usr_refresh")
@@ -56,22 +57,16 @@ def disconnect():
 @socketio.on('connect_event', namespace='/websocket/user_refresh')
 def refresh_message(message):
     """ 服务端接受客户端发送的通信请求 """
-    # todo：添加room
-    print(message)
     # 将workerid->sid 的 映射放入redis缓存中
     sid = request.sid
     flag = setWorkeridSidMapper(sid, message.get("workerid"))
     if flag:
-        emit('server_response', {'data': "请求成功" + sid}, room=sid)
+        # 当连接的时候就需要推送给用户信息[此时是消息列表]
+        msglist = get_unsend_msg(message.get('workerid'))
+        print(msglist)
+        emit('init_response', {'data': msglist}, room=sid)
     else:
         emit("server_response", {'data': '请求失败'}, room=sid)
-
-
-@socketio.on("receive_msg", namespace="/websocket/user_refresh")
-def receive_msg(msg):
-    """接收到来自客户端的消息"""
-    strmsg = msg['data']
-    emit("server_respchat", {'data': "你发送了：" + strmsg})
 
 
 @socketio.on_error()
@@ -92,7 +87,7 @@ def default_error_handler(e):
 
 def websocket_pushmsg(data, workerid):
     """
-    推送消息给客户端
+    推送消息给客户端[此时是推送单个消息]
     :param data:
     :param workerid:
     :return:
