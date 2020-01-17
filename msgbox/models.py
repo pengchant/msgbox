@@ -152,8 +152,8 @@ class SystemMessage(Base, BaseModel):
     msg_title = Column(String(255), nullable=False)  # 消息的标题
     from_sys_id = Column(Integer, ForeignKey('msgbox_servicesystem.id'), nullable=False)  # 消息所属的系统编号
     to_usr_id = Column(Integer, ForeignKey("msgbox_userinfo.id"), nullable=False)  # 推送的用户对象编号
-    msg_push_time = Column(DateTime, default=datetime.utcnow())  # 推送消息的时间
-    msg_read_time = Column(DateTime, default=datetime.utcnow())  # 推送给用户消息查看的时间
+    msg_push_time = Column(DateTime, default=datetime.now())  # 推送消息的时间
+    msg_read_time = Column(DateTime, default=datetime.now())  # 推送给用户消息查看的时间
     msg_url = Column(String(255), nullable=False)  # 消息浏览器打开的路径
     msg_status = Column(  # 消息的状态
         Enum(
@@ -170,4 +170,6 @@ class SystemMessage(Base, BaseModel):
             "id": self.id,
             "msg_title": self.msg_title,
             "msg_push_time": self.msg_push_time.strftime(format="%Y-%m-%d %H:%M"),
+            "msg_url": self.msg_url,  # 消息具体的链接
+            "from_sys": self.from_sys_id,  # 系统的编号
         }

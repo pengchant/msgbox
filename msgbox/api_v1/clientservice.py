@@ -24,20 +24,25 @@ def clientFetchData():
     workerid = jsonobj.get("workerid")
     msgslist = jsonobj.get("msgs")
 
-    if not all([workerid, msgslist]):
-        return jsonify(re_code=RET.PARAMERR, msg="参数不完整")
+    if workerid is None:
+        return jsonify(re_code=RET.PARAMERR, msg="用户参数有误")
 
-    # 根据workerid查询用户的信息
+        # 根据workerid查询用户的信息
     usr = User.query.filter(User.workerid == workerid).first()
     if usr is None:
         return jsonify(re_code=RET.PARAMERR, msg="工号非法")
 
     try:
-        # 根据消息编号更新信息
-        msg = SystemMessage.query.filter(SystemMessage.id.in_(tuple(msgslist))).update(
-            {SystemMessage.msg_status: 'WAITTING_READ'})
-        msg.status = "WAITTING_READ"
-        db_session.commit()
-        return jsonify(re_code=RET.OK, data=get_usr_msg(usr.id))
+        if msgslist is not None and len(msgslist) > 0:
+            # 根据消息编号更新信息
+            msg_tuple = tuple(msgslist)
+            SystemMessage.query.filter(SystemMessage.id.in_(msg_tuple)).update(
+                {SystemMessage.msg_status: 'WAITTING_READ'},
+                synchronize_session=False)
+            db_session.commit()
+
+        # 抓取所有的数据
+        return jsonify(re_code=RET.OK, data=get_usr_msg(workerid))
     except Exception as e:
-        return jsonify(re_code=RET.DBERR, msg="查询数据失败，请稍后重试")
+        print(e)
+        return jsonify(re_code=RET.DBERR, msg="更新数据失败，请稍后重试")

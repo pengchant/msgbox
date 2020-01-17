@@ -77,6 +77,7 @@ def pushmsg():
     msg.msg_title = des
     msg.msg_url = url
     msg.msg_status = "WAITTING_SEND"  # 待发送
+    msg.msg_push_time = datetime.datetime.now()
     try:
         db_session.add(msg)
         db_session.commit()
