@@ -92,5 +92,7 @@ def websocket_pushmsg(data, workerid):
     :param workerid:
     :return:
     """
-    roomid = str(getSIdByWorkerId(workerid), encoding="utf-8")
-    socketio.emit("push_message", data, namespace="/websocket/user_refresh", room=roomid)
+    sid = getSIdByWorkerId(workerid)
+    if sid:
+        roomid = str(sid, encoding="utf-8")
+        socketio.emit("push_message", data, namespace="/websocket/user_refresh", room=roomid)

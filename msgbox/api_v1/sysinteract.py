@@ -81,12 +81,16 @@ def pushmsg():
     try:
         db_session.add(msg)
         db_session.commit()
-        # todo:推送给客户端消息
-        websocket_pushmsg({
-            "msg_id": msg.id,
-            "msg_title": msg.msg_title,
-            "msg_url": msg.msg_url
-        }, usr.workerid)
+        try:
+            # todo:推送给客户端消息
+            websocket_pushmsg({
+                "msg_id": msg.id,
+                "msg_title": msg.msg_title,
+                "msg_url": msg.msg_url
+            }, usr.workerid)
+        except:
+            # 默认继续处理
+            pass
         return jsonify(re_code=RET.OK, msg="推送消息成功")
     except  Exception as e:
         return jsonify(re_code=RET.DBERR, msg="推送消息失败，请稍后重试")

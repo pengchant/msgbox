@@ -172,4 +172,5 @@ class SystemMessage(Base, BaseModel):
             "msg_push_time": self.msg_push_time.strftime(format="%Y-%m-%d %H:%M"),
             "msg_url": self.msg_url,  # 消息具体的链接
             "from_sys": self.from_sys_id,  # 系统的编号
+            "msg_status": self.msg_status  # 消息的状态
         }

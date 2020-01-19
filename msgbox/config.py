@@ -9,6 +9,9 @@ class BaseConfig:
     """
     基础的配置
     """
+    # HOST = "0.0.0.0"
+    # PORT = 5000
+
     # 避免返回中文为unicode字符
     JSON_AS_ASCII = False
 
